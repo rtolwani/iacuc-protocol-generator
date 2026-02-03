@@ -552,11 +552,11 @@ pytest tests/unit/test_consistency_checker.py -v
 **Goal**: Agent that compiles final document and validates
 
 **Tasks**:
-- [ ] Create `src/agents/protocol_assembler.py`
-- [ ] Assemble all sections in correct order
-- [ ] Run consistency checks
-- [ ] Generate completeness score
-- [ ] Flag missing required fields
+- [x] Create `src/agents/protocol_assembler.py`
+- [x] Assemble all sections in correct order
+- [x] Run consistency checks
+- [x] Generate completeness score
+- [x] Flag missing required fields
 
 **Verification**:
 ```bash

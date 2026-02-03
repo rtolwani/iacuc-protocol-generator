@@ -46,6 +46,12 @@ from src.agents.intake_specialist import (
     process_intake,
     quick_intake,
 )
+from src.agents.protocol_assembler import (
+    create_protocol_assembler_agent,
+    create_assembly_task,
+    assemble_protocol,
+    quick_assemble,
+)
 
 __all__ = [
     "get_llm",
@@ -77,4 +83,8 @@ __all__ = [
     "create_intake_task",
     "process_intake",
     "quick_intake",
+    "create_protocol_assembler_agent",
+    "create_assembly_task",
+    "assemble_protocol",
+    "quick_assemble",
 ]
