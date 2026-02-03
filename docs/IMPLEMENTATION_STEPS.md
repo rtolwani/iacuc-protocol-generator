@@ -825,10 +825,10 @@ npm run dev
 **Goal**: Multi-step form for protocol creation
 
 **Tasks**:
-- [ ] Create questionnaire step components
-- [ ] Implement form state management
-- [ ] Connect to backend questionnaire API
-- [ ] Add progress indicator
+- [x] Create questionnaire step components
+- [x] Implement form state management
+- [x] Connect to backend questionnaire API
+- [x] Add progress indicator
 
 **Verification**:
 - Manually test form flow in browser
