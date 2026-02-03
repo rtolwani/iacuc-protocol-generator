@@ -434,6 +434,114 @@ async def list_checkpoint_types() -> list[dict]:
 
 
 # ============================================================================
+# AI CREW EXECUTION
+# ============================================================================
+
+class RunCrewRequest(BaseModel):
+    """Request to run AI crew on a protocol."""
+    verbose: bool = Field(default=False, description="Show detailed agent output")
+
+
+class RunCrewResponse(BaseModel):
+    """Response from AI crew execution."""
+    success: bool
+    protocol_id: str
+    agent_outputs: dict
+    errors: list[str] = Field(default_factory=list)
+    message: str
+
+
+@router.post("/protocols/{protocol_id}/run-crew")
+async def run_ai_crew(
+    protocol_id: str,
+    request: RunCrewRequest = RunCrewRequest(),
+) -> RunCrewResponse:
+    """
+    Run the full CrewAI agents on a submitted protocol.
+    
+    This triggers all 8 agents to review and enhance the protocol:
+    1. Intake Specialist - Extracts parameters
+    2. Regulatory Scout - Identifies regulations  
+    3. Lay Summary Writer - Creates lay summary
+    4. Alternatives Researcher - Documents 3Rs
+    5. Statistical Consultant - Reviews statistics
+    6. Veterinary Reviewer - Reviews welfare
+    7. Procedure Writer - Writes procedures
+    8. Protocol Assembler - Compiles document
+    """
+    from src.api.routes.protocols import ProtocolStorage
+    from src.agents.crew import generate_protocol, ProtocolInput
+    
+    # Load protocol
+    storage = ProtocolStorage()
+    protocol = storage.load(protocol_id)
+    
+    if not protocol:
+        raise HTTPException(status_code=404, detail="Protocol not found")
+    
+    # Check status
+    if protocol.status.value not in ["submitted", "under_review"]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Protocol must be submitted for review. Current status: {protocol.status.value}"
+        )
+    
+    # Update status to under_review
+    from src.protocol.schema import ProtocolStatus
+    protocol.status = ProtocolStatus.UNDER_REVIEW
+    storage.save(protocol)
+    
+    try:
+        # Build crew input from protocol
+        animals = protocol.animals
+        species = animals[0].species if animals else "Unknown"
+        strain = animals[0].strain if animals and animals[0].strain else None
+        total_animals = sum(a.total_number for a in animals) if animals else 0
+        
+        crew_input = ProtocolInput(
+            title=protocol.title,
+            pi_name=protocol.principal_investigator.name,
+            species=species,
+            strain=strain,
+            total_animals=total_animals,
+            research_description=protocol.scientific_objectives or protocol.lay_summary,
+            procedures=protocol.experimental_design or "To be determined",
+            study_duration=protocol.study_duration,
+            primary_endpoint=None,
+        )
+        
+        # Run the crew
+        result = generate_protocol(crew_input, verbose=request.verbose)
+        
+        if result.success:
+            # Update protocol with AI outputs (optional - store for review)
+            return RunCrewResponse(
+                success=True,
+                protocol_id=protocol_id,
+                agent_outputs=result.agent_outputs,
+                errors=[],
+                message="AI review completed successfully. Protocol is ready for human review."
+            )
+        else:
+            return RunCrewResponse(
+                success=False,
+                protocol_id=protocol_id,
+                agent_outputs={},
+                errors=result.errors,
+                message="AI review failed. See errors for details."
+            )
+            
+    except Exception as e:
+        return RunCrewResponse(
+            success=False,
+            protocol_id=protocol_id,
+            agent_outputs={},
+            errors=[str(e)],
+            message=f"Error running AI crew: {str(e)}"
+        )
+
+
+# ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
 

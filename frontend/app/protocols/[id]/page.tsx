@@ -146,6 +146,30 @@ export default function ProtocolDetailPage() {
             Submit for Review
           </Button>
         )}
+        {protocol.status === "submitted" && (
+          <Button 
+            onClick={async () => {
+              try {
+                setLoading(true);
+                setError(null);
+                const result = await api.runAICrew(protocol.id, false);
+                if (result.success) {
+                  setProtocol({ ...protocol, status: "under_review" });
+                  alert("AI Review completed! Check the Review page for results.");
+                } else {
+                  setError(result.message || "AI review failed");
+                }
+              } catch (err) {
+                setError(err instanceof Error ? err.message : "Failed to run AI review");
+              } finally {
+                setLoading(false);
+              }
+            }}
+            disabled={loading}
+          >
+            {loading ? "Running AI Review..." : "Run AI Review"}
+          </Button>
+        )}
       </div>
 
       {/* Basic Information */}
