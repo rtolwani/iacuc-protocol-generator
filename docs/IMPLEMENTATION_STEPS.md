@@ -618,10 +618,10 @@ python scripts/generate_sample_protocol.py --type behavioral --output sample_out
 **Goal**: Create structured question definitions for all branches
 
 **Tasks**:
-- [ ] Create `src/questionnaire/schema.py`
-- [ ] Define question types (single_select, multi_select, text, etc.)
-- [ ] Create questions for basic info, species, procedures
-- [ ] Add help text and regulatory references
+- [x] Create `src/questionnaire/schema.py`
+- [x] Define question types (single_select, multi_select, text, etc.)
+- [x] Create questions for basic info, species, procedures
+- [x] Add help text and regulatory references
 
 **Verification**:
 ```bash
