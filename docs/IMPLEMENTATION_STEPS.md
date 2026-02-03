@@ -777,10 +777,10 @@ pytest tests/integration/test_protocol_api.py -v
 **Goal**: Export completed protocols to PDF/Word
 
 **Tasks**:
-- [ ] Create `src/protocol/export.py`
-- [ ] Implement PDF generation
-- [ ] Implement Word document generation
-- [ ] Add institutional header/footer templates
+- [x] Create `src/protocol/export.py`
+- [x] Implement PDF generation
+- [x] Implement Word document generation
+- [x] Add institutional header/footer templates
 
 **Verification**:
 ```bash

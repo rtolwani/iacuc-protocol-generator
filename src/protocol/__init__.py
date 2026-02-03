@@ -14,6 +14,13 @@ from src.protocol.schema import (
     DrugInfo,
     HumaneEndpoint,
     ProtocolStatus,
+    create_empty_protocol,
+)
+from src.protocol.export import (
+    PDFExporter,
+    MarkdownExporter,
+    export_to_pdf,
+    export_to_markdown,
 )
 
 __all__ = [
@@ -25,4 +32,9 @@ __all__ = [
     "DrugInfo",
     "HumaneEndpoint",
     "ProtocolStatus",
+    "create_empty_protocol",
+    "PDFExporter",
+    "MarkdownExporter",
+    "export_to_pdf",
+    "export_to_markdown",
 ]
