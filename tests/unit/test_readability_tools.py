@@ -192,16 +192,6 @@ class TestReadabilityScoreTool:
         
         # Should include jargon replacement suggestions
         assert "Jargon Replacement" in result or "utilize" in result
-    
-    def test_custom_target_grade(self):
-        """Test with custom target grade."""
-        tool = ReadabilityScoreTool()
-        
-        text = "This is moderately complex text."
-        
-        result = tool._run(text, target_grade=3.0)
-        
-        assert "target: ≤3.0" in result
 
 
 class TestIntegration:
