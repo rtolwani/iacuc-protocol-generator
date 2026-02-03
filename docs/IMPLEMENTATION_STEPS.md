@@ -472,11 +472,11 @@ pytest tests/unit/test_veterinary_reviewer.py -v
 **Goal**: Agent that generates detailed procedure descriptions
 
 **Tasks**:
-- [ ] Create `src/agents/procedure_writer.py`
-- [ ] Generate step-by-step procedures
-- [ ] Create drug administration tables
-- [ ] Generate monitoring schedules
-- [ ] Include AVMA-compliant euthanasia methods
+- [x] Create `src/agents/procedure_writer.py`
+- [x] Generate step-by-step procedures
+- [x] Create drug administration tables
+- [x] Generate monitoring schedules
+- [x] Include AVMA-compliant euthanasia methods
 
 **Verification**:
 ```bash

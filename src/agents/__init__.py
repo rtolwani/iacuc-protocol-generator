@@ -34,6 +34,12 @@ from src.agents.veterinary_reviewer import (
     conduct_veterinary_review,
     quick_veterinary_check,
 )
+from src.agents.procedure_writer import (
+    create_procedure_writer_agent,
+    create_procedure_writing_task,
+    write_procedure_documentation,
+    quick_procedure_generation,
+)
 
 __all__ = [
     "get_llm",
@@ -57,4 +63,8 @@ __all__ = [
     "create_veterinary_review_task",
     "conduct_veterinary_review",
     "quick_veterinary_check",
+    "create_procedure_writer_agent",
+    "create_procedure_writing_task",
+    "write_procedure_documentation",
+    "quick_procedure_generation",
 ]
