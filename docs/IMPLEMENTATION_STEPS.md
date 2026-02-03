@@ -49,10 +49,10 @@ python -c "import pydantic; print('Pydantic OK')"
 - Credit card for API billing (small amounts for development)
 
 **Tasks**:
-- [ ] Create Anthropic account at https://console.anthropic.com/
-- [ ] Generate Anthropic API key
-- [ ] (Optional) Create OpenAI account for embeddings
-- [ ] Add keys to `.env` file (NEVER commit this file!)
+- [x] Create Anthropic account at https://console.anthropic.com/
+- [x] Generate Anthropic API key
+- [x] (Optional) Create OpenAI account for embeddings
+- [x] Add keys to `.env` file (NEVER commit this file!)
 
 **Verification**:
 ```bash
