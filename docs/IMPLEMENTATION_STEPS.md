@@ -900,9 +900,9 @@ pytest --cov=src --cov-report=html
 **Goal**: Visual demonstration of the system
 
 **Tasks**:
-- [ ] Record demo of complete workflow
-- [ ] Capture screenshots of key screens
-- [ ] Add to documentation
+- [x] Record demo of complete workflow
+- [x] Capture screenshots of key screens
+- [x] Add to documentation
 
 **Commit message**: `docs: add demo materials`
 
