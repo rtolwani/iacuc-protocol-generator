@@ -70,9 +70,9 @@ python scripts/verify_api_keys.py
 **Goal**: Have a running web server that responds to requests
 
 **Tasks**:
-- [ ] Create `src/main.py` with basic FastAPI app
-- [ ] Create health check endpoint
-- [ ] Test that server starts and responds
+- [x] Create `src/main.py` with basic FastAPI app
+- [x] Create health check endpoint
+- [x] Test that server starts and responds
 
 **Verification**:
 ```bash
