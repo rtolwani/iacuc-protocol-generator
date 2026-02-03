@@ -682,10 +682,10 @@ python scripts/generate_questionnaire_schema.py --branch surgical > sample_schem
 **Goal**: Persist workflow state at review points
 
 **Tasks**:
-- [ ] Create `src/review/state_manager.py`
-- [ ] Implement state serialization/deserialization
-- [ ] Support pause and resume at any checkpoint
-- [ ] Store reviewer feedback
+- [x] Create `src/review/state_manager.py`
+- [x] Implement state serialization/deserialization
+- [x] Support pause and resume at any checkpoint
+- [x] Store reviewer feedback
 
 **Verification**:
 ```bash
