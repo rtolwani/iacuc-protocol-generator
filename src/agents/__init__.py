@@ -52,6 +52,14 @@ from src.agents.protocol_assembler import (
     assemble_protocol,
     quick_assemble,
 )
+from src.agents.crew import (
+    create_all_agents,
+    create_protocol_crew,
+    generate_protocol,
+    quick_crew_check,
+    ProtocolInput,
+    CrewResult,
+)
 
 __all__ = [
     "get_llm",
@@ -87,4 +95,10 @@ __all__ = [
     "create_assembly_task",
     "assemble_protocol",
     "quick_assemble",
+    "create_all_agents",
+    "create_protocol_crew",
+    "generate_protocol",
+    "quick_crew_check",
+    "ProtocolInput",
+    "CrewResult",
 ]
