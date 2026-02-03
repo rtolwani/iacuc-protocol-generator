@@ -95,10 +95,10 @@ uvicorn src.main:app --reload
 **Goal**: Have a working vector database for RAG
 
 **Tasks**:
-- [ ] Create `src/rag/vector_store.py`
-- [ ] Initialize ChromaDB with persistent storage
-- [ ] Create basic add/query functions
-- [ ] Write test to verify it works
+- [x] Create `src/rag/vector_store.py`
+- [x] Initialize ChromaDB with persistent storage
+- [x] Create basic add/query functions
+- [x] Write test to verify it works
 
 **Verification**:
 ```bash
