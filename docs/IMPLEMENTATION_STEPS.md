@@ -759,10 +759,10 @@ pytest tests/unit/test_protocol_schema.py -v
 **Goal**: CRUD operations for protocols
 
 **Tasks**:
-- [ ] Create `src/api/routes/protocols.py`
-- [ ] Implement create, read, update, delete
-- [ ] Add list with filtering
-- [ ] Connect to database
+- [x] Create `src/api/routes/protocols.py`
+- [x] Implement create, read, update, delete
+- [x] Add list with filtering
+- [x] Connect to database
 
 **Verification**:
 ```bash

@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.api.routes.review import router as review_router
+from src.api.routes.protocols import router as protocols_router
 
 
 def create_app() -> FastAPI:
@@ -36,6 +37,7 @@ def create_app() -> FastAPI:
     
     # Include routers
     app.include_router(review_router, prefix="/api/v1")
+    app.include_router(protocols_router, prefix="/api/v1")
     
     # Health check endpoint
     @app.get("/health")
