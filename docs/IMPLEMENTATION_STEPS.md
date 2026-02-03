@@ -593,10 +593,10 @@ pytest tests/integration/test_full_crew.py -v --timeout=300
 **Goal**: Generate a complete protocol from realistic input
 
 **Tasks**:
-- [ ] Create realistic test inputs (behavioral study, surgical study, tumor model)
-- [ ] Run full generation workflow
-- [ ] Validate all output sections
-- [ ] Check regulatory compliance
+- [x] Create realistic test inputs (behavioral study, surgical study, tumor model)
+- [x] Run full generation workflow
+- [x] Validate all output sections
+- [x] Check regulatory compliance
 
 **Verification**:
 ```bash
