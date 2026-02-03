@@ -493,10 +493,10 @@ pytest tests/unit/test_procedure_writer.py -v
 **Goal**: Tool that classifies research type and triggers appropriate branches
 
 **Tasks**:
-- [ ] Create `src/tools/research_classifier.py`
-- [ ] Classify by procedure types (surgery, behavioral, etc.)
-- [ ] Identify species categories
-- [ ] Flag special requirements (DEA, wildlife permits)
+- [x] Create `src/tools/research_classifier.py`
+- [x] Classify by procedure types (surgery, behavioral, etc.)
+- [x] Identify species categories
+- [x] Flag special requirements (DEA, wildlife permits)
 
 **Verification**:
 ```bash

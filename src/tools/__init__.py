@@ -35,6 +35,10 @@ from src.tools.formulary_tool import (
     FormularyLookupTool,
     DrugFormulary,
 )
+from src.tools.research_classifier import (
+    ResearchClassifierTool,
+    classify_research,
+)
 
 __all__ = [
     "RegulatorySearchTool",
@@ -56,4 +60,6 @@ __all__ = [
     "EFFECT_SIZE_GUIDELINES",
     "FormularyLookupTool",
     "DrugFormulary",
+    "ResearchClassifierTool",
+    "classify_research",
 ]
