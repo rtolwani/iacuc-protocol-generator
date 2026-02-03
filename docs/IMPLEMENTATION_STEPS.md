@@ -453,11 +453,11 @@ python scripts/test_formulary_lookup.py --drug "ketamine" --species "mouse"
 **Goal**: Agent that simulates veterinary pre-review
 
 **Tasks**:
-- [ ] Create `src/agents/veterinary_reviewer.py`
-- [ ] Implement drug dosage validation against formulary
-- [ ] Add humane endpoint assessment
-- [ ] Create welfare concern flagging system
-- [ ] Implement severity ratings (critical, warning, info)
+- [x] Create `src/agents/veterinary_reviewer.py`
+- [x] Implement drug dosage validation against formulary
+- [x] Add humane endpoint assessment
+- [x] Create welfare concern flagging system
+- [x] Implement severity ratings (critical, warning, info)
 
 **Verification**:
 ```bash

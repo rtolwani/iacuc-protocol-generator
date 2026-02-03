@@ -28,6 +28,12 @@ from src.agents.statistical_consultant import (
     review_protocol_statistics,
     quick_statistical_check,
 )
+from src.agents.veterinary_reviewer import (
+    create_veterinary_reviewer_agent,
+    create_veterinary_review_task,
+    conduct_veterinary_review,
+    quick_veterinary_check,
+)
 
 __all__ = [
     "get_llm",
@@ -47,4 +53,8 @@ __all__ = [
     "create_statistical_review_task",
     "review_protocol_statistics",
     "quick_statistical_check",
+    "create_veterinary_reviewer_agent",
+    "create_veterinary_review_task",
+    "conduct_veterinary_review",
+    "quick_veterinary_check",
 ]
