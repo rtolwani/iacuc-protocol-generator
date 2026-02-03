@@ -174,10 +174,10 @@ python scripts/test_rag_retrieval.py --query "pain category D requirements"
 **Goal**: Have a working tool that agents can use to search documents
 
 **Tasks**:
-- [ ] Create `src/tools/rag_tools.py`
-- [ ] Implement `RegulatorySearchTool` class
-- [ ] Add metadata filtering (by document type, species, etc.)
-- [ ] Write tests
+- [x] Create `src/tools/rag_tools.py`
+- [x] Implement `RegulatorySearchTool` class
+- [x] Add metadata filtering (by document type, species, etc.)
+- [x] Write tests
 
 **Verification**:
 ```bash
