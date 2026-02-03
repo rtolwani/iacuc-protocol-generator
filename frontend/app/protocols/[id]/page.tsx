@@ -10,6 +10,13 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import api from "@/lib/api";
 
+interface HumaneEndpoint {
+  criterion: string;
+  measurement: string;
+  threshold: string;
+  action: string;
+}
+
 interface Protocol {
   id: string;
   title: string;
@@ -38,16 +45,20 @@ interface Protocol {
   replacement_statement?: string;
   reduction_statement?: string;
   refinement_statement?: string;
-  humane_endpoints?: string;
+  humane_endpoints?: HumaneEndpoint[] | string;
   monitoring_schedule?: string;
 }
 
 const statusColors: Record<string, string> = {
   draft: "bg-gray-500",
-  pending_review: "bg-yellow-500",
+  submitted: "bg-yellow-500",
+  under_review: "bg-blue-500",
   approved: "bg-green-500",
   rejected: "bg-red-500",
   revision_requested: "bg-orange-500",
+  expired: "bg-gray-400",
+  suspended: "bg-red-400",
+  terminated: "bg-red-600",
 };
 
 export default function ProtocolDetailPage() {
@@ -121,6 +132,20 @@ export default function ProtocolDetailPage() {
         <Button variant="outline" onClick={() => window.print()}>
           Print / Export
         </Button>
+        {protocol.status === "draft" && (
+          <Button 
+            onClick={async () => {
+              try {
+                await api.updateStatus(protocol.id, "submitted");
+                setProtocol({ ...protocol, status: "submitted" });
+              } catch (err) {
+                setError(err instanceof Error ? err.message : "Failed to submit");
+              }
+            }}
+          >
+            Submit for Review
+          </Button>
+        )}
       </div>
 
       {/* Basic Information */}
@@ -281,7 +306,22 @@ export default function ProtocolDetailPage() {
             {protocol.humane_endpoints && (
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Humane Endpoints</p>
-                <p>{protocol.humane_endpoints}</p>
+                {typeof protocol.humane_endpoints === "string" ? (
+                  <p>{protocol.humane_endpoints}</p>
+                ) : Array.isArray(protocol.humane_endpoints) ? (
+                  <div className="space-y-2 mt-2">
+                    {protocol.humane_endpoints.map((endpoint, index) => (
+                      <div key={index} className="p-3 bg-muted rounded-md text-sm">
+                        <p><span className="font-medium">Criterion:</span> {endpoint.criterion}</p>
+                        <p><span className="font-medium">Measurement:</span> {endpoint.measurement}</p>
+                        <p><span className="font-medium">Threshold:</span> {endpoint.threshold}</p>
+                        <p><span className="font-medium">Action:</span> {endpoint.action}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground">No endpoints defined</p>
+                )}
               </div>
             )}
             {protocol.monitoring_schedule && (
