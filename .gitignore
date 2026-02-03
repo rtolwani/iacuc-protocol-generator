@@ -1,0 +1,168 @@
+# =============================================================================
+# IACUC Protocol Generator - Git Ignore
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Environment & Secrets (CRITICAL - Never commit these!)
+# -----------------------------------------------------------------------------
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+secrets/
+
+# -----------------------------------------------------------------------------
+# Python
+# -----------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# -----------------------------------------------------------------------------
+# Data & Knowledge Base
+# -----------------------------------------------------------------------------
+# Persist directory for ChromaDB
+data/
+
+# Knowledge base documents (may contain proprietary institutional docs)
+knowledge_base/institutional/
+knowledge_base/regulatory_core/*.pdf
+knowledge_base/clinical_standards/*.pdf
+knowledge_base/alternatives/*.pdf
+
+# Keep the directory structure but not the contents
+!knowledge_base/
+!knowledge_base/institutional/
+!knowledge_base/regulatory_core/
+!knowledge_base/clinical_standards/
+!knowledge_base/alternatives/
+!knowledge_base/**/.gitkeep
+
+# -----------------------------------------------------------------------------
+# IDE & Editors
+# -----------------------------------------------------------------------------
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# -----------------------------------------------------------------------------
+# OS Files
+# -----------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# -----------------------------------------------------------------------------
+# Jupyter Notebooks
+# -----------------------------------------------------------------------------
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# -----------------------------------------------------------------------------
+# Frontend (Next.js / Node)
+# -----------------------------------------------------------------------------
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.pnp
+frontend/.pnp.js
+frontend/coverage/
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# -----------------------------------------------------------------------------
+# Build & Distribution
+# -----------------------------------------------------------------------------
+*.log
+logs/
+tmp/
+temp/
+
+# -----------------------------------------------------------------------------
+# Generated Files
+# -----------------------------------------------------------------------------
+# Generated protocols
+output/
+exports/
+
+# Sample outputs during development
+sample_output*.json
+sample_output*.pdf
+sample_output*.docx
+
+# -----------------------------------------------------------------------------
+# Docker
+# -----------------------------------------------------------------------------
+.docker/
+
+# -----------------------------------------------------------------------------
+# Misc
+# -----------------------------------------------------------------------------
+*.bak
+*.tmp
+*.temp
