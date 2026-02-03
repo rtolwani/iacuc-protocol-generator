@@ -10,6 +10,14 @@ from src.review.state_manager import (
     CheckpointData,
     ReviewerFeedback,
     StateManager,
+    WorkflowStatus,
+    CheckpointStatus,
+)
+from src.review.checkpoints import (
+    CheckpointType,
+    CheckpointConfig,
+    CheckpointManager,
+    CHECKPOINTS,
 )
 
 __all__ = [
@@ -17,4 +25,10 @@ __all__ = [
     "CheckpointData",
     "ReviewerFeedback",
     "StateManager",
+    "WorkflowStatus",
+    "CheckpointStatus",
+    "CheckpointType",
+    "CheckpointConfig",
+    "CheckpointManager",
+    "CHECKPOINTS",
 ]
