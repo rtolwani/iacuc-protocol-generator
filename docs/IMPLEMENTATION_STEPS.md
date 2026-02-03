@@ -511,10 +511,10 @@ pytest tests/unit/test_research_classifier.py -v
 **Goal**: Agent that extracts research parameters and identifies gaps
 
 **Tasks**:
-- [ ] Create `src/agents/intake_specialist.py`
-- [ ] Parse unstructured research descriptions
-- [ ] Generate clarifying questions for missing info
-- [ ] Output structured research profile
+- [x] Create `src/agents/intake_specialist.py`
+- [x] Parse unstructured research descriptions
+- [x] Generate clarifying questions for missing info
+- [x] Output structured research profile
 
 **Verification**:
 ```bash

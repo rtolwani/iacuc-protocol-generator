@@ -40,6 +40,12 @@ from src.agents.procedure_writer import (
     write_procedure_documentation,
     quick_procedure_generation,
 )
+from src.agents.intake_specialist import (
+    create_intake_specialist_agent,
+    create_intake_task,
+    process_intake,
+    quick_intake,
+)
 
 __all__ = [
     "get_llm",
@@ -67,4 +73,8 @@ __all__ = [
     "create_procedure_writing_task",
     "write_procedure_documentation",
     "quick_procedure_generation",
+    "create_intake_specialist_agent",
+    "create_intake_task",
+    "process_intake",
+    "quick_intake",
 ]
