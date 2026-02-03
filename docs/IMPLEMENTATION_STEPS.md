@@ -150,10 +150,10 @@ pytest tests/unit/test_ingestion.py -v
     - https://www.avma.org/resources-tools/avma-policies/avma-guidelines-euthanasia-animals
 
 **Tasks**:
-- [ ] Download the documents
-- [ ] Place in `knowledge_base/regulatory_core/`
-- [ ] Run ingestion pipeline on each
-- [ ] Verify documents are searchable
+- [x] Download the documents
+- [x] Place in `knowledge_base/regulatory_core/`
+- [x] Run ingestion pipeline on each
+- [x] Verify documents are searchable
 
 **Verification**:
 ```bash
