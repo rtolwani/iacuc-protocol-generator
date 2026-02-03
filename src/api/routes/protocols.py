@@ -100,7 +100,7 @@ class UpdateProtocolRequest(BaseModel):
     """Request to update protocol fields."""
     
     title: Optional[str] = Field(default=None, min_length=10, max_length=300)
-    lay_summary: Optional[str] = Field(default=None, min_length=100)
+    lay_summary: Optional[str] = Field(default=None, min_length=50)
     scientific_objectives: Optional[str] = Field(default=None)
     scientific_rationale: Optional[str] = Field(default=None)
     replacement_statement: Optional[str] = Field(default=None)

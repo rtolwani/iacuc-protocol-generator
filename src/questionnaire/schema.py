@@ -170,7 +170,7 @@ BASIC_INFO_QUESTIONS = QuestionGroup(
                 ValidationRule(
                     rule_type="min_length",
                     value=100,
-                    message="Please provide at least 100 characters",
+                    message="Please provide at least 50 characters",
                 ),
             ],
             order=7,

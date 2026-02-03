@@ -31,7 +31,7 @@ export function ReviewStep({
   if (!basicInfo.pi_name) missingFields.push("Principal investigator");
   if (!basicInfo.pi_email) missingFields.push("PI email");
   if (!basicInfo.department) missingFields.push("Department");
-  if (!basicInfo.lay_summary || basicInfo.lay_summary.length < 100) missingFields.push("Lay summary (min 100 characters)");
+  if (!basicInfo.lay_summary || basicInfo.lay_summary.length < 50) missingFields.push("Lay summary (min 50 characters)");
   if (animals.animals.length === 0) missingFields.push("Animal information");
   if (!animals.usda_category) missingFields.push("USDA pain category");
   if (!animals.animal_number_justification) missingFields.push("Animal number justification");

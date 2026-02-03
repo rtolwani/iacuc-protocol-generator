@@ -106,7 +106,7 @@ export function BasicInfoStep({ data, onChange }: BasicInfoStepProps) {
             rows={5}
           />
           <p className="text-xs text-muted-foreground">
-            Minimum 100 characters. Write at a level understandable by the general public.
+            Minimum 50 characters. Write at a level understandable by the general public.
           </p>
         </div>
       </CardContent>

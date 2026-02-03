@@ -169,7 +169,7 @@ class Protocol(BaseModel):
     # Section 2: Lay Summary
     lay_summary: str = Field(
         description="Non-technical summary understandable by non-scientists",
-        min_length=100,
+        min_length=50,
     )
     
     # Section 3: Personnel
