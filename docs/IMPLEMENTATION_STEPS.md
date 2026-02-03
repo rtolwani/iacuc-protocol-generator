@@ -636,10 +636,10 @@ pytest tests/unit/test_questionnaire_schema.py -v
 **Goal**: Questions that adapt based on previous answers
 
 **Tasks**:
-- [ ] Create `src/questionnaire/branching.py`
-- [ ] Implement trigger conditions
-- [ ] Handle nested branching
-- [ ] Test all major pathways
+- [x] Create `src/questionnaire/branching.py`
+- [x] Implement trigger conditions
+- [x] Handle nested branching
+- [x] Test all major pathways
 
 **Verification**:
 ```bash

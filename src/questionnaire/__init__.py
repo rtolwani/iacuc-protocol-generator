@@ -13,6 +13,15 @@ from src.questionnaire.schema import (
     SPECIES_QUESTIONS,
     PROCEDURE_QUESTIONS,
 )
+from src.questionnaire.branching import (
+    Branch,
+    BranchCondition,
+    QuestionnaireState,
+    get_active_branches,
+    evaluate_branch,
+    calculate_progress,
+    validate_questionnaire,
+)
 
 __all__ = [
     "QuestionType",
@@ -21,4 +30,11 @@ __all__ = [
     "BASIC_INFO_QUESTIONS",
     "SPECIES_QUESTIONS",
     "PROCEDURE_QUESTIONS",
+    "Branch",
+    "BranchCondition",
+    "QuestionnaireState",
+    "get_active_branches",
+    "evaluate_branch",
+    "calculate_progress",
+    "validate_questionnaire",
 ]
