@@ -115,11 +115,11 @@ pytest tests/unit/test_vector_store.py -v
 **Goal**: Be able to load PDF documents into the vector store
 
 **Tasks**:
-- [ ] Create `src/rag/ingestion.py`
-- [ ] Implement PDF text extraction
-- [ ] Implement text chunking with overlap
-- [ ] Add metadata extraction
-- [ ] Create ingestion script
+- [x] Create `src/rag/ingestion.py`
+- [x] Implement PDF text extraction
+- [x] Implement text chunking with overlap
+- [x] Add metadata extraction
+- [x] Create ingestion script
 
 **What you need before starting**:
 - At least ONE PDF document for testing (can be any PDF initially)
