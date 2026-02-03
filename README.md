@@ -40,7 +40,7 @@ This system helps researchers create high-quality IACUC protocol drafts by:
 │   LAY SUMMARY   │     │    PROTOCOL     │
 │    WRITER       │────▶│   ASSEMBLER     │────▶ [FINAL OUTPUT]
 │                 │     │                 │
-│ 7th grade level,│     │ Consistency     │
+│ College level,  │     │ Consistency     │
 │ no jargon       │     │ checks, format  │
 └─────────────────┘     └─────────────────┘
 ```
@@ -55,116 +55,144 @@ This system helps researchers create high-quality IACUC protocol drafts by:
 | **Statistical Consultant** | Justify animal numbers | Power analysis, group breakdowns |
 | **Veterinary Reviewer** | Simulate vet pre-review | Welfare flags, dosage validation, clinical recommendations |
 | **Procedure Writer** | Generate detailed procedures | Step-by-step protocols, monitoring schedules |
-| **Lay Summary Writer** | Translate to plain language | 7th-grade reading level summary |
+| **Lay Summary Writer** | Translate to plain language | College reading level summary |
 | **Protocol Assembler** | Compile and validate | Submission-ready document, consistency report |
 
-## 📚 RAG Knowledge Base Structure
+## 🚀 Getting Started
 
+### Prerequisites
+
+- **Python 3.11+**
+- **Node.js 18+** (for frontend)
+- **Anthropic API Key** (for Claude)
+- **OpenAI API Key** (for embeddings)
+
+### Quick Start
+
+```bash
+# Clone repository
+git clone https://github.com/rtolwani/iacuc-protocol-generator.git
+cd iacuc-protocol-generator
+
+# Create and activate virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install Python dependencies
+pip install -e ".[dev]"
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your API keys:
+# - ANTHROPIC_API_KEY=your_key_here
+# - OPENAI_API_KEY=your_key_here
+
+# Run tests to verify installation
+pytest tests/unit/ -v
+
+# Start the backend API
+uvicorn src.api.app:app --reload
+
+# In a new terminal, start the frontend
+cd frontend
+npm install
+npm run dev
 ```
-knowledge_base/
-├── regulatory_core/           # Federal regulations
-│   ├── the_guide_8th_edition.pdf
-│   ├── phs_policy.pdf
-│   ├── awa_regulations_9cfr.pdf
-│   └── usda_policy_manual.pdf
-├── clinical_standards/        # Clinical guidelines
-│   ├── avma_euthanasia_guidelines.pdf
-│   └── species_guidelines/
-├── institutional/             # YOUR institution's documents
-│   ├── sops/
-│   ├── drug_formulary.pdf
-│   └── iacuc_policies/
-└── alternatives/              # 3Rs resources
-```
 
-## 🔄 Human-in-the-Loop Checkpoints
+### API Access
 
-The system pauses for human review at critical decision points:
-
-1. **Post-Intake Review** - PI confirms AI understood research correctly
-2. **Pain Category Determination** - Verify classification (requires vet for D/E)
-3. **Alternatives Search Validation** - Confirm search was comprehensive
-4. **Veterinary Pre-Review** - Actual veterinarian reviews clinical aspects
-5. **Final Protocol Review** - PI approval before submission
-
-## 🛠️ Technology Stack
-
-- **Backend**: Python 3.11+, FastAPI
-- **Agent Framework**: CrewAI
-- **LLM**: Claude 3.5 Sonnet (Anthropic)
-- **Vector Database**: ChromaDB
-- **Frontend**: React/Next.js (planned)
-- **Database**: PostgreSQL/SQLite
+- **Backend API**: http://localhost:8000
+- **API Documentation**: http://localhost:8000/docs
+- **Frontend**: http://localhost:3000
 
 ## 📁 Project Structure
 
 ```
 iacuc-protocol-generator/
 ├── src/
-│   ├── agents/          # CrewAI agent definitions
-│   ├── tools/           # Agent tools (RAG, validation, etc.)
+│   ├── agents/          # CrewAI agent definitions (8 agents)
+│   ├── tools/           # Agent tools (RAG, validation, formulary)
 │   ├── rag/             # Document ingestion and retrieval
 │   ├── questionnaire/   # Adaptive questioning system
 │   ├── review/          # Human-in-the-loop checkpoints
-│   ├── protocol/        # Protocol data models
+│   ├── protocol/        # Protocol data models & export
 │   └── api/             # FastAPI routes
+├── frontend/            # Next.js frontend
+│   ├── app/             # Next.js app router pages
+│   └── components/      # React components
 ├── knowledge_base/      # RAG documents (gitignored)
-├── tests/               # Test suite
+├── tests/               # Test suite (743+ tests)
+│   ├── unit/            # Unit tests
+│   └── integration/     # API integration tests
 ├── scripts/             # Utility scripts
 └── docs/                # Documentation
 ```
 
-## 🚀 Getting Started
+## 📚 Knowledge Base Setup
 
-See [SETUP.md](docs/SETUP.md) for detailed setup instructions.
-
-### Quick Start
+Add your regulatory documents to the knowledge base:
 
 ```bash
-# Clone repository
-git clone https://github.com/YOUR_USERNAME/iacuc-protocol-generator.git
-cd iacuc-protocol-generator
+# Create the knowledge base directory structure
+mkdir -p knowledge_base/regulatory_core
+mkdir -p knowledge_base/clinical_standards
+mkdir -p knowledge_base/institutional
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# Add your PDFs (examples):
+# - knowledge_base/regulatory_core/Guide_for_the_care_and_use_of_laboratory_animals.pdf
+# - knowledge_base/regulatory_core/PHSPolicyLabAnimals.pdf
+# - knowledge_base/regulatory_core/Guidelines-on-Euthanasia-2020.pdf
 
-# Install dependencies
-pip install -e ".[dev]"
-
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your API keys
-
-# Run tests
-pytest
-
-# Start development server
-uvicorn src.main:app --reload
+# Ingest documents into the vector database
+python scripts/ingest_documents.py
 ```
 
-## 📋 Implementation Phases
+## 🔄 Human-in-the-Loop Checkpoints
 
-This project is being built incrementally. See [IMPLEMENTATION_STEPS.md](docs/IMPLEMENTATION_STEPS.md) for the detailed step-by-step guide.
+The system pauses for human review at critical decision points:
 
-### Current Status: Phase 1 - Foundation
+1. **Intake Review** - Confirm AI understood research correctly
+2. **Regulatory Review** - Verify pain category classification
+3. **Statistical Review** - Validate power analysis
+4. **Veterinary Review** - Clinical aspects review
+5. **Final Review** - PI approval before submission
 
-- [x] Project structure created
-- [ ] Development environment setup
-- [ ] Basic RAG pipeline
-- [ ] First agent (Lay Summary Writer)
+## 🧪 Testing
 
-## 🔑 Required API Keys
+```bash
+# Run all unit tests
+pytest tests/unit/ -v
 
-- **Anthropic API Key** - For Claude 3.5 Sonnet
-- **OpenAI API Key** (optional) - For embeddings (can use alternatives)
+# Run integration tests
+pytest tests/integration/ -v
 
-## 📖 Documentation
+# Run with coverage report
+pytest --cov=src --cov-report=html
+```
 
-- [Implementation Steps](docs/IMPLEMENTATION_STEPS.md) - Step-by-step build guide
-- [Architecture Blueprint](docs/ARCHITECTURE_BLUEPRINT.md) - Full technical specification
-- [Agent Specifications](docs/AGENT_SPECIFICATIONS.md) - Detailed agent definitions
-- [Testing Guide](docs/TESTING_GUIDE.md) - How to run and write tests
+## 📦 Key Features
+
+### Questionnaire System
+- Adaptive branching based on research type
+- Species-specific questions
+- USDA pain category determination
+- JSON Schema generation for frontend
+
+### Protocol Generation
+- All 13 IACUC-required sections
+- PDF and Markdown export
+- Completeness scoring
+- Missing section detection
+
+### Drug Formulary
+- Species-specific dosing validation
+- Route of administration checking
+- USDA category compatibility
+
+### Review Dashboard
+- Pending review queue
+- Approve/reject/revise workflow
+- Reviewer comments and feedback
 
 ## ⚠️ Important Notes
 
@@ -173,14 +201,37 @@ This project is being built incrementally. See [IMPLEMENTATION_STEPS.md](docs/IM
 - Institutional documents (SOPs, formulary) are required for full functionality
 - Drug dosages must be verified against your institutional formulary
 
+## 📖 Documentation
+
+- [Implementation Steps](docs/IMPLEMENTATION_STEPS.md) - Step-by-step build guide
+- [Architecture Blueprint](docs/ARCHITECTURE_BLUEPRINT.md) - Full technical specification
+- [Agent Specifications](docs/AGENT_SPECIFICATIONS.md) - Detailed agent definitions
+
+## 🛠️ Technology Stack
+
+| Component | Technology |
+|-----------|------------|
+| Backend | Python 3.11+, FastAPI |
+| Agent Framework | CrewAI |
+| LLM | Claude 3.5 Sonnet (Anthropic) |
+| Embeddings | OpenAI text-embedding-ada-002 |
+| Vector Database | ChromaDB |
+| Frontend | Next.js 16, React, shadcn/ui |
+| CSS | Tailwind CSS |
+| Testing | pytest, pytest-cov |
+
 ## 📄 License
 
-[TBD]
+MIT License
 
 ## 🤝 Contributing
 
-[TBD]
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ---
 
-*This project was designed to demonstrate sophisticated multi-agent orchestration for regulatory compliance in biomedical research.*
+*This project demonstrates sophisticated multi-agent orchestration for regulatory compliance in biomedical research.*
