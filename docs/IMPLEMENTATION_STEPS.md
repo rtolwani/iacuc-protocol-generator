@@ -25,10 +25,10 @@ For each step:
 - A code editor (VS Code recommended)
 
 **Tasks**:
-- [ ] Clone the repository (if not already done)
-- [ ] Create Python virtual environment
-- [ ] Install initial dependencies
-- [ ] Verify Python and pip work correctly
+- [x] Clone the repository (if not already done)
+- [x] Create Python virtual environment
+- [x] Install initial dependencies
+- [x] Verify Python and pip work correctly
 
 **Verification**:
 ```bash
