@@ -529,11 +529,11 @@ pytest tests/unit/test_intake_specialist.py -v
 **Goal**: Tool that validates internal consistency of protocol
 
 **Tasks**:
-- [ ] Create `src/tools/consistency_checker.py`
-- [ ] Check animal numbers match across sections
-- [ ] Verify personnel are consistently listed
-- [ ] Validate timeline alignment
-- [ ] Flag contradictions
+- [x] Create `src/tools/consistency_checker.py`
+- [x] Check animal numbers match across sections
+- [x] Verify personnel are consistently listed
+- [x] Validate timeline alignment
+- [x] Flag contradictions
 
 **Verification**:
 ```bash

@@ -39,6 +39,10 @@ from src.tools.research_classifier import (
     ResearchClassifierTool,
     classify_research,
 )
+from src.tools.consistency_checker import (
+    ConsistencyCheckerTool,
+    check_protocol_consistency,
+)
 
 __all__ = [
     "RegulatorySearchTool",
@@ -62,4 +66,6 @@ __all__ = [
     "DrugFormulary",
     "ResearchClassifierTool",
     "classify_research",
+    "ConsistencyCheckerTool",
+    "check_protocol_consistency",
 ]
