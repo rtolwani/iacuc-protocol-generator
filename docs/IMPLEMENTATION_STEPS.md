@@ -805,10 +805,10 @@ python scripts/export_protocol.py --id SAMPLE_ID --format docx
 - npm or yarn
 
 **Tasks**:
-- [ ] Initialize Next.js project in `frontend/`
-- [ ] Install shadcn/ui components
-- [ ] Configure Tailwind CSS
-- [ ] Create basic layout
+- [x] Initialize Next.js project in `frontend/`
+- [x] Install shadcn/ui components
+- [x] Configure Tailwind CSS
+- [x] Create basic layout
 
 **Verification**:
 ```bash
