@@ -659,10 +659,10 @@ pytest tests/unit/test_questionnaire_branching.py -v
 **Goal**: Generate dynamic form schemas for the frontend
 
 **Tasks**:
-- [ ] Create `src/questionnaire/renderer.py`
-- [ ] Output JSON Schema format for forms
-- [ ] Include validation rules
-- [ ] Test schema generation
+- [x] Create `src/questionnaire/renderer.py`
+- [x] Output JSON Schema format for forms
+- [x] Include validation rules
+- [x] Test schema generation
 
 **Verification**:
 ```bash

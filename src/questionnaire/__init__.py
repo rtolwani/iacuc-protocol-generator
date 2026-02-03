@@ -22,6 +22,12 @@ from src.questionnaire.branching import (
     calculate_progress,
     validate_questionnaire,
 )
+from src.questionnaire.renderer import (
+    render_question_group,
+    render_full_questionnaire,
+    render_single_group,
+    FormSchema,
+)
 
 __all__ = [
     "QuestionType",
@@ -37,4 +43,8 @@ __all__ = [
     "evaluate_branch",
     "calculate_progress",
     "validate_questionnaire",
+    "render_question_group",
+    "render_full_questionnaire",
+    "render_single_group",
+    "FormSchema",
 ]
