@@ -843,10 +843,10 @@ npm run dev
 **Goal**: Interface for reviewers to approve protocols
 
 **Tasks**:
-- [ ] Create review dashboard page
-- [ ] Show flagged items with severity
-- [ ] Implement approve/reject/comment actions
-- [ ] Connect to review API
+- [x] Create review dashboard page
+- [x] Show flagged items with severity
+- [x] Implement approve/reject/comment actions
+- [x] Connect to review API
 
 **Verification**:
 - Manually test review flow
