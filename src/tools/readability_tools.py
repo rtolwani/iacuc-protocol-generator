@@ -4,23 +4,11 @@ Readability Scoring Tools.
 Provides tools for measuring text readability and suggesting simplifications.
 """
 
-from typing import Optional, Type
-
 import textstat
-from langchain.tools import BaseTool
+from crewai.tools import BaseTool
 from pydantic import BaseModel, Field
 
 
-class ReadabilityInput(BaseModel):
-    """Input schema for readability analysis."""
-    
-    text: str = Field(
-        description="The text to analyze for readability"
-    )
-    target_grade: float = Field(
-        default=7.0,
-        description="Target reading grade level (default 7.0 for lay audience)"
-    )
 
 
 class ReadabilityResult(BaseModel):
@@ -231,24 +219,23 @@ class ReadabilityScoreTool(BaseTool):
     """
     
     name: str = "readability_score"
-    description: str = """Analyze text readability using Flesch-Kincaid grade level.
-Returns the grade level, whether it passes the target (default: grade 7), 
-and specific suggestions for simplification. Use this to ensure lay summaries
-are accessible to non-scientific audiences."""
+    description: str = (
+        "Analyze text readability using Flesch-Kincaid grade level. "
+        "Input should be the text to analyze. Returns the grade level, "
+        "whether it passes grade 14 target (college level), and suggestions for improvement."
+    )
     
-    args_schema: Type[BaseModel] = ReadabilityInput
-    
-    def _run(self, text: str, target_grade: float = 7.0) -> str:
+    def _run(self, text: str) -> str:
         """
         Analyze readability and return formatted results.
         
         Args:
             text: Text to analyze
-            target_grade: Target grade level (default 7.0)
             
         Returns:
             Formatted readability analysis
         """
+        target_grade = 14.0
         result = analyze_readability(text, target_grade)
         
         # Format output
@@ -278,7 +265,3 @@ are accessible to non-scientific audiences."""
                 output.append(f"  • '{jargon}' → '{replacement}'")
         
         return "\n".join(output)
-    
-    async def _arun(self, text: str, target_grade: float = 7.0) -> str:
-        """Async version - just calls sync version."""
-        return self._run(text, target_grade)

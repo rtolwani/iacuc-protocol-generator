@@ -243,10 +243,10 @@ pytest tests/unit/test_readability_tools.py -v
 **Goal**: Have an agent that can simplify technical text
 
 **Tasks**:
-- [ ] Create `src/agents/lay_summary_writer.py`
-- [ ] Define agent role, goal, backstory
-- [ ] Connect readability tool to agent
-- [ ] Implement iterative refinement (rewrite until grade ≤ 7)
+- [x] Create `src/agents/lay_summary_writer.py`
+- [x] Define agent role, goal, backstory
+- [x] Connect readability tool to agent
+- [x] Implement iterative refinement (rewrite until grade ≤ 7)
 
 **Verification**:
 ```bash
