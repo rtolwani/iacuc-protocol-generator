@@ -22,6 +22,12 @@ from src.agents.alternatives_researcher import (
     research_alternatives,
     quick_3rs_check,
 )
+from src.agents.statistical_consultant import (
+    create_statistical_consultant_agent,
+    create_statistical_review_task,
+    review_protocol_statistics,
+    quick_statistical_check,
+)
 
 __all__ = [
     "get_llm",
@@ -37,4 +43,8 @@ __all__ = [
     "create_alternatives_research_task",
     "research_alternatives",
     "quick_3rs_check",
+    "create_statistical_consultant_agent",
+    "create_statistical_review_task",
+    "review_protocol_statistics",
+    "quick_statistical_check",
 ]

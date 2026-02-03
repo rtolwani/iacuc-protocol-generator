@@ -410,10 +410,10 @@ pytest tests/unit/test_power_analysis_tool.py -v
 **Goal**: Agent that justifies animal numbers
 
 **Tasks**:
-- [ ] Create `src/agents/statistical_consultant.py`
-- [ ] Generate power analysis documentation
-- [ ] Create animal numbers breakdown tables
-- [ ] Handle non-power-analysis justifications
+- [x] Create `src/agents/statistical_consultant.py`
+- [x] Generate power analysis documentation
+- [x] Create animal numbers breakdown tables
+- [x] Handle non-power-analysis justifications
 
 **Verification**:
 ```bash
