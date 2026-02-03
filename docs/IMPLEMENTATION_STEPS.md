@@ -313,10 +313,10 @@ pytest tests/unit/test_pain_category_tool.py -v
 **Goal**: Agent that identifies all applicable regulations
 
 **Tasks**:
-- [ ] Create `src/agents/regulatory_scout.py`
-- [ ] Connect RAG tool and pain category tool
-- [ ] Implement species regulation mapping
-- [ ] Add permit requirement detection
+- [x] Create `src/agents/regulatory_scout.py`
+- [x] Connect RAG tool and pain category tool
+- [x] Implement species regulation mapping
+- [x] Add permit requirement detection
 
 **Verification**:
 ```bash

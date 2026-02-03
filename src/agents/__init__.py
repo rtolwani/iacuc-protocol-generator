@@ -10,6 +10,12 @@ from src.agents.lay_summary_writer import (
     create_lay_summary_task,
     generate_lay_summary,
 )
+from src.agents.regulatory_scout import (
+    create_regulatory_scout_agent,
+    create_regulatory_scout_task,
+    analyze_protocol_regulations,
+    quick_regulatory_check,
+)
 
 __all__ = [
     "get_llm",
@@ -17,4 +23,8 @@ __all__ = [
     "create_lay_summary_writer_agent",
     "create_lay_summary_task",
     "generate_lay_summary",
+    "create_regulatory_scout_agent",
+    "create_regulatory_scout_task",
+    "analyze_protocol_regulations",
+    "quick_regulatory_check",
 ]

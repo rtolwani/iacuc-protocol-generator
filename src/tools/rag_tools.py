@@ -4,28 +4,11 @@ RAG Tools for Agent Use.
 Provides tools that agents can use to search the regulatory knowledge base.
 """
 
-from typing import Optional, Type
+from typing import Optional
 
-from langchain.tools import BaseTool
-from pydantic import BaseModel, Field
+from crewai.tools import BaseTool
 
 from src.rag.vector_store import VectorStore
-
-
-class RegulatorySearchInput(BaseModel):
-    """Input schema for regulatory search tool."""
-    
-    query: str = Field(
-        description="The search query to find relevant regulatory information"
-    )
-    doc_type: Optional[str] = Field(
-        default=None,
-        description="Filter by document type: 'regulatory', 'clinical', 'institutional', or 'general'"
-    )
-    n_results: int = Field(
-        default=5,
-        description="Number of results to return (1-10)"
-    )
 
 
 class RegulatorySearchTool(BaseTool):
@@ -40,49 +23,36 @@ class RegulatorySearchTool(BaseTool):
     """
     
     name: str = "regulatory_search"
-    description: str = """Search the regulatory knowledge base for information about 
-animal care, IACUC requirements, pain categories, euthanasia methods, surgical procedures, 
-and other regulatory guidance. Returns relevant excerpts with source citations."""
-    
-    args_schema: Type[BaseModel] = RegulatorySearchInput
+    description: str = (
+        "Search the regulatory knowledge base for information about animal care, "
+        "IACUC requirements, pain categories, euthanasia methods, surgical procedures, "
+        "and other regulatory guidance. Input should be a search query string."
+    )
     
     vector_store: Optional[VectorStore] = None
     
     def __init__(self, vector_store: Optional[VectorStore] = None, **kwargs):
         """Initialize the tool with optional vector store."""
         super().__init__(**kwargs)
-        self.vector_store = vector_store or VectorStore()
+        if vector_store is None:
+            self.vector_store = VectorStore()
+        else:
+            self.vector_store = vector_store
     
-    def _run(
-        self,
-        query: str,
-        doc_type: Optional[str] = None,
-        n_results: int = 5,
-    ) -> str:
+    def _run(self, query: str) -> str:
         """
         Execute the search and return formatted results.
         
         Args:
             query: Search query text
-            doc_type: Optional filter by document type
-            n_results: Number of results to return
             
         Returns:
             Formatted string with search results and citations
         """
-        # Validate n_results
-        n_results = max(1, min(10, n_results))
-        
-        # Build metadata filter
-        where_filter = None
-        if doc_type and doc_type in ["regulatory", "clinical", "institutional", "general"]:
-            where_filter = {"doc_type": doc_type}
-        
         # Query the vector store
         results = self.vector_store.query(
             query_text=query,
-            n_results=n_results,
-            where=where_filter,
+            n_results=5,
         )
         
         # Format results
@@ -111,26 +81,6 @@ and other regulatory guidance. Returns relevant excerpts with source citations."
             )
         
         return "\n".join(formatted_results)
-    
-    async def _arun(
-        self,
-        query: str,
-        doc_type: Optional[str] = None,
-        n_results: int = 5,
-    ) -> str:
-        """Async version - just calls sync version."""
-        return self._run(query, doc_type, n_results)
-
-
-class SpeciesGuidanceInput(BaseModel):
-    """Input schema for species-specific guidance search."""
-    
-    species: str = Field(
-        description="The species to search guidance for (e.g., 'mouse', 'rat', 'rabbit', 'dog')"
-    )
-    topic: str = Field(
-        description="The topic to search for (e.g., 'housing', 'anesthesia', 'euthanasia', 'surgery')"
-    )
 
 
 class SpeciesGuidanceTool(BaseTool):
@@ -141,66 +91,52 @@ class SpeciesGuidanceTool(BaseTool):
     """
     
     name: str = "species_guidance"
-    description: str = """Find species-specific guidance for animal care and procedures. 
-Provide the species name and topic to get relevant regulatory requirements."""
-    
-    args_schema: Type[BaseModel] = SpeciesGuidanceInput
+    description: str = (
+        "Find species-specific guidance for animal care and procedures. "
+        "Input should be 'species topic' format, e.g., 'mouse housing' or 'rat anesthesia'."
+    )
     
     vector_store: Optional[VectorStore] = None
     
     def __init__(self, vector_store: Optional[VectorStore] = None, **kwargs):
         """Initialize the tool with optional vector store."""
         super().__init__(**kwargs)
-        self.vector_store = vector_store or VectorStore()
+        if vector_store is None:
+            self.vector_store = VectorStore()
+        else:
+            self.vector_store = vector_store
     
-    def _run(self, species: str, topic: str) -> str:
+    def _run(self, query: str) -> str:
         """
         Search for species-specific guidance.
         
         Args:
-            species: The animal species
-            topic: The topic of interest
+            query: Species and topic, e.g., "mouse housing"
             
         Returns:
             Formatted search results
         """
-        # Construct a targeted query
-        query = f"{species} {topic} requirements guidelines"
+        # Enhance query for better results
+        enhanced_query = f"{query} requirements guidelines"
         
         results = self.vector_store.query(
-            query_text=query,
+            query_text=enhanced_query,
             n_results=5,
         )
         
         if not results["ids"][0]:
-            return f"No specific guidance found for {species} regarding {topic}."
+            return f"No specific guidance found for: {query}"
         
-        formatted_results = [
-            f"Species-specific guidance for {species.upper()} - {topic.upper()}:\n"
-        ]
+        formatted_results = [f"Species-specific guidance for: {query.upper()}\n"]
         
         for i, (document, metadata) in enumerate(
             zip(results["documents"][0], results["metadatas"][0])
         ):
             source = metadata.get("filename", "Unknown")
-            formatted_results.append(
-                f"\n[{i + 1}] From {source}:\n{document[:800]}..."
-                if len(document) > 800 else f"\n[{i + 1}] From {source}:\n{document}"
-            )
+            content = document[:800] + "..." if len(document) > 800 else document
+            formatted_results.append(f"\n[{i + 1}] From {source}:\n{content}")
         
         return "\n".join(formatted_results)
-    
-    async def _arun(self, species: str, topic: str) -> str:
-        """Async version - just calls sync version."""
-        return self._run(species, topic)
-
-
-class EuthanasiaMethodInput(BaseModel):
-    """Input schema for euthanasia method search."""
-    
-    species: str = Field(
-        description="The species for euthanasia method lookup"
-    )
 
 
 class EuthanasiaMethodTool(BaseTool):
@@ -211,17 +147,20 @@ class EuthanasiaMethodTool(BaseTool):
     """
     
     name: str = "euthanasia_methods"
-    description: str = """Find AVMA-approved euthanasia methods for a specific species. 
-Returns acceptable methods, contraindications, and requirements."""
-    
-    args_schema: Type[BaseModel] = EuthanasiaMethodInput
+    description: str = (
+        "Find AVMA-approved euthanasia methods for a specific species. "
+        "Input should be the species name, e.g., 'mouse' or 'rabbit'."
+    )
     
     vector_store: Optional[VectorStore] = None
     
     def __init__(self, vector_store: Optional[VectorStore] = None, **kwargs):
         """Initialize the tool with optional vector store."""
         super().__init__(**kwargs)
-        self.vector_store = vector_store or VectorStore()
+        if vector_store is None:
+            self.vector_store = VectorStore()
+        else:
+            self.vector_store = vector_store
     
     def _run(self, species: str) -> str:
         """
@@ -243,21 +182,13 @@ Returns acceptable methods, contraindications, and requirements."""
         if not results["ids"][0]:
             return f"No euthanasia guidance found for {species}."
         
-        formatted_results = [
-            f"AVMA Euthanasia Guidance for {species.upper()}:\n"
-        ]
+        formatted_results = [f"AVMA Euthanasia Guidance for {species.upper()}:\n"]
         
         for i, (document, metadata) in enumerate(
             zip(results["documents"][0], results["metadatas"][0])
         ):
             source = metadata.get("filename", "Unknown")
-            formatted_results.append(
-                f"\n[{i + 1}] From {source}:\n{document[:800]}..."
-                if len(document) > 800 else f"\n[{i + 1}] From {source}:\n{document}"
-            )
+            content = document[:800] + "..." if len(document) > 800 else document
+            formatted_results.append(f"\n[{i + 1}] From {source}:\n{content}")
         
         return "\n".join(formatted_results)
-    
-    async def _arun(self, species: str) -> str:
-        """Async version - just calls sync version."""
-        return self._run(species)

@@ -71,14 +71,13 @@ class TestRegulatorySearchTool:
         assert "Pain Category D" in result
         assert "anesthetic" in result.lower() or "analgesic" in result.lower()
     
-    def test_search_with_doc_type_filter(self, populated_vector_store):
-        """Test searching with document type filter."""
+    def test_search_anesthesia(self, populated_vector_store):
+        """Test searching for anesthesia information."""
         tool = RegulatorySearchTool(vector_store=populated_vector_store)
         
-        result = tool._run("anesthesia protocols", doc_type="clinical")
+        result = tool._run("anesthesia protocols")
         
         assert "Result" in result
-        # Should find the rat anesthesia document which is clinical type
     
     def test_search_survival_surgery(self, populated_vector_store):
         """Test searching for survival surgery requirements."""
@@ -111,24 +110,13 @@ class TestRegulatorySearchTool:
             
             assert "No relevant documents found" in result
     
-    def test_n_results_limit(self, populated_vector_store):
-        """Test that n_results parameter limits results."""
+    def test_search_multiple_results(self, populated_vector_store):
+        """Test that search returns multiple results."""
         tool = RegulatorySearchTool(vector_store=populated_vector_store)
         
-        result = tool._run("pain", n_results=2)
+        result = tool._run("pain")
         
-        # Should only have 2 results
-        assert result.count("--- Result") == 2
-    
-    def test_n_results_validation(self, populated_vector_store):
-        """Test that n_results is validated to reasonable range."""
-        tool = RegulatorySearchTool(vector_store=populated_vector_store)
-        
-        # Should not crash with extreme values
-        result = tool._run("pain", n_results=100)  # Too high
-        assert "Result" in result
-        
-        result = tool._run("pain", n_results=0)  # Too low
+        # Should have results
         assert "Result" in result
 
 
@@ -144,18 +132,17 @@ class TestSpeciesGuidanceTool:
         """Test finding mouse housing guidance."""
         tool = SpeciesGuidanceTool(vector_store=populated_vector_store)
         
-        result = tool._run(species="mouse", topic="housing")
+        result = tool._run("mouse housing")
         
-        assert "MOUSE" in result
-        assert "housing" in result.lower()
+        assert "MOUSE HOUSING" in result
     
     def test_rat_anesthesia(self, populated_vector_store):
         """Test finding rat anesthesia guidance."""
         tool = SpeciesGuidanceTool(vector_store=populated_vector_store)
         
-        result = tool._run(species="rat", topic="anesthesia")
+        result = tool._run("rat anesthesia")
         
-        assert "RAT" in result
+        assert "RAT ANESTHESIA" in result
 
 
 class TestEuthanasiaMethodTool:
