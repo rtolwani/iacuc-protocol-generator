@@ -19,6 +19,13 @@ from src.tools.pain_category_tool import (
     classify_pain_category,
     PAIN_CATEGORIES,
 )
+from src.tools.literature_search_tool import (
+    LiteratureSearchTool,
+    generate_search_keywords,
+    create_search_documentation,
+    REQUIRED_DATABASES,
+    ALTERNATIVES_DATABASES,
+)
 
 __all__ = [
     "RegulatorySearchTool",
@@ -30,4 +37,9 @@ __all__ = [
     "PainCategoryTool",
     "classify_pain_category",
     "PAIN_CATEGORIES",
+    "LiteratureSearchTool",
+    "generate_search_keywords",
+    "create_search_documentation",
+    "REQUIRED_DATABASES",
+    "ALTERNATIVES_DATABASES",
 ]
