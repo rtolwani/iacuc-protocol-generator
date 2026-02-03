@@ -37,6 +37,9 @@ dependencies = [
     # Text Analysis
     "textstat>=0.7.3",
 
+    # Statistical Analysis
+    "scipy>=1.11.0",
+
     # Database
     "sqlalchemy>=2.0.0",
     "aiosqlite>=0.19.0",

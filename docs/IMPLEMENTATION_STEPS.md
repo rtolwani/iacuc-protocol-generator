@@ -392,10 +392,10 @@ pytest tests/unit/test_alternatives_researcher.py -v
 **Goal**: Tool that performs/validates sample size calculations
 
 **Tasks**:
-- [ ] Create `src/tools/power_analysis_tool.py`
-- [ ] Implement basic power analysis formulas
-- [ ] Support common statistical tests (t-test, ANOVA)
-- [ ] Add attrition calculation
+- [x] Create `src/tools/power_analysis_tool.py`
+- [x] Implement basic power analysis formulas
+- [x] Support common statistical tests (t-test, ANOVA)
+- [x] Add attrition calculation
 
 **Verification**:
 ```bash

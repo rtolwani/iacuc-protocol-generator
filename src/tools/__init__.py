@@ -26,6 +26,11 @@ from src.tools.literature_search_tool import (
     REQUIRED_DATABASES,
     ALTERNATIVES_DATABASES,
 )
+from src.tools.power_analysis_tool import (
+    PowerAnalysisTool,
+    perform_power_analysis,
+    EFFECT_SIZE_GUIDELINES,
+)
 
 __all__ = [
     "RegulatorySearchTool",
@@ -42,4 +47,7 @@ __all__ = [
     "create_search_documentation",
     "REQUIRED_DATABASES",
     "ALTERNATIVES_DATABASES",
+    "PowerAnalysisTool",
+    "perform_power_analysis",
+    "EFFECT_SIZE_GUIDELINES",
 ]
