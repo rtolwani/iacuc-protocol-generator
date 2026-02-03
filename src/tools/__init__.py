@@ -14,6 +14,11 @@ from src.tools.readability_tools import (
     analyze_readability,
     suggest_replacements,
 )
+from src.tools.pain_category_tool import (
+    PainCategoryTool,
+    classify_pain_category,
+    PAIN_CATEGORIES,
+)
 
 __all__ = [
     "RegulatorySearchTool",
@@ -22,4 +27,7 @@ __all__ = [
     "ReadabilityScoreTool",
     "analyze_readability",
     "suggest_replacements",
+    "PainCategoryTool",
+    "classify_pain_category",
+    "PAIN_CATEGORIES",
 ]

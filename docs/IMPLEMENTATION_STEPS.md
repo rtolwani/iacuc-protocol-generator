@@ -290,10 +290,10 @@ pytest tests/integration/test_lay_summary_e2e.py -v
 **Goal**: Tool that determines USDA pain category based on procedures
 
 **Tasks**:
-- [ ] Create `src/tools/pain_category_tool.py`
-- [ ] Implement classification logic based on USDA definitions
-- [ ] Handle edge cases (multiple procedures, relief measures)
-- [ ] Write comprehensive tests
+- [x] Create `src/tools/pain_category_tool.py`
+- [x] Implement classification logic based on USDA definitions
+- [x] Handle edge cases (multiple procedures, relief measures)
+- [x] Write comprehensive tests
 
 **Verification**:
 ```bash
