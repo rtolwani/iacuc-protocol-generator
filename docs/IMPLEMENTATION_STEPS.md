@@ -202,9 +202,9 @@ print(result[:500])
 **Goal**: Have CrewAI working with Claude as the LLM
 
 **Tasks**:
-- [ ] Create `src/agents/__init__.py`
-- [ ] Create `src/config.py` for LLM configuration
-- [ ] Test that CrewAI can call Claude successfully
+- [x] Create `src/agents/__init__.py`
+- [x] Create `src/config.py` for LLM configuration
+- [x] Test that CrewAI can call Claude successfully
 
 **Verification**:
 ```bash

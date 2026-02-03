@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     openai_api_key: Optional[str] = None
 
     # LLM Settings
-    default_model: str = "claude-3-5-sonnet-20241022"
+    default_model: str = "claude-sonnet-4-20250514"
     llm_temperature: float = 0.3
     llm_max_tokens: int = 4096
 
