@@ -336,9 +336,9 @@ python scripts/test_regulatory_scout.py --species "rabbit" --procedures "surviva
 **Goal**: Verify two agents can work together in sequence
 
 **Tasks**:
-- [ ] Create simple crew with Regulatory Scout → Lay Summary Writer
-- [ ] Test handoff between agents
-- [ ] Verify context is preserved
+- [x] Create simple crew with Regulatory Scout → Lay Summary Writer
+- [x] Test handoff between agents
+- [x] Verify context is preserved
 
 **Verification**:
 ```bash
