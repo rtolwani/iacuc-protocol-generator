@@ -718,10 +718,10 @@ pytest tests/unit/test_checkpoints.py -v
 **Goal**: API for reviewers to approve/reject/comment
 
 **Tasks**:
-- [ ] Create `src/api/routes/review.py`
-- [ ] Implement GET checkpoint status
-- [ ] Implement POST approval/rejection
-- [ ] Handle revision requests
+- [x] Create `src/api/routes/review.py`
+- [x] Implement GET checkpoint status
+- [x] Implement POST approval/rejection
+- [x] Handle revision requests
 
 **Verification**:
 ```bash
