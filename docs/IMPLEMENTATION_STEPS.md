@@ -372,10 +372,10 @@ pytest tests/unit/test_literature_search_tool.py -v
 **Goal**: Agent that generates 3Rs documentation
 
 **Tasks**:
-- [ ] Create `src/agents/alternatives_researcher.py`
-- [ ] Implement Replacement, Reduction, Refinement sections
-- [ ] Connect RAG tool for alternatives resources
-- [ ] Generate compliant search narratives
+- [x] Create `src/agents/alternatives_researcher.py`
+- [x] Implement Replacement, Reduction, Refinement sections
+- [x] Connect RAG tool for alternatives resources
+- [x] Generate compliant search narratives
 
 **Verification**:
 ```bash

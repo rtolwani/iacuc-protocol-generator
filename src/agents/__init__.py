@@ -16,6 +16,12 @@ from src.agents.regulatory_scout import (
     analyze_protocol_regulations,
     quick_regulatory_check,
 )
+from src.agents.alternatives_researcher import (
+    create_alternatives_researcher_agent,
+    create_alternatives_research_task,
+    research_alternatives,
+    quick_3rs_check,
+)
 
 __all__ = [
     "get_llm",
@@ -27,4 +33,8 @@ __all__ = [
     "create_regulatory_scout_task",
     "analyze_protocol_regulations",
     "quick_regulatory_check",
+    "create_alternatives_researcher_agent",
+    "create_alternatives_research_task",
+    "research_alternatives",
+    "quick_3rs_check",
 ]
