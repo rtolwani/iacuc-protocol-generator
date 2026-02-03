@@ -1,0 +1,315 @@
+{
+  "formulary_info": {
+    "institution": "Sample Research Institution",
+    "version": "2024.1",
+    "last_updated": "2024-01-15",
+    "approved_by": "IACUC Veterinary Committee"
+  },
+  "drugs": [
+    {
+      "name": "Ketamine",
+      "class": "Dissociative anesthetic",
+      "dea_schedule": "III",
+      "species_dosing": {
+        "mouse": {
+          "dose_range": "80-100 mg/kg",
+          "route": "IP",
+          "onset": "5-10 minutes",
+          "duration": "20-30 minutes",
+          "notes": "Usually combined with xylazine for surgical anesthesia"
+        },
+        "rat": {
+          "dose_range": "75-100 mg/kg",
+          "route": "IP",
+          "onset": "5-10 minutes",
+          "duration": "20-30 minutes",
+          "notes": "Usually combined with xylazine for surgical anesthesia"
+        },
+        "rabbit": {
+          "dose_range": "35-50 mg/kg",
+          "route": "IM",
+          "onset": "5-10 minutes",
+          "duration": "20-30 minutes",
+          "notes": "Combine with xylazine or medetomidine"
+        },
+        "guinea_pig": {
+          "dose_range": "40-100 mg/kg",
+          "route": "IP or IM",
+          "onset": "5-10 minutes",
+          "duration": "20-30 minutes",
+          "notes": "Poor muscle relaxation alone"
+        }
+      },
+      "contraindications": ["Hepatic disease", "Increased intracranial pressure"],
+      "storage": "Room temperature, DEA-controlled storage required"
+    },
+    {
+      "name": "Xylazine",
+      "class": "Alpha-2 adrenergic agonist (sedative/analgesic)",
+      "dea_schedule": "Not scheduled",
+      "species_dosing": {
+        "mouse": {
+          "dose_range": "5-16 mg/kg",
+          "route": "IP",
+          "onset": "10-15 minutes",
+          "duration": "1-2 hours",
+          "notes": "Usually combined with ketamine"
+        },
+        "rat": {
+          "dose_range": "5-10 mg/kg",
+          "route": "IP",
+          "onset": "10-15 minutes",
+          "duration": "1-2 hours",
+          "notes": "Usually combined with ketamine"
+        },
+        "rabbit": {
+          "dose_range": "5-10 mg/kg",
+          "route": "IM",
+          "onset": "10-15 minutes",
+          "duration": "1-2 hours",
+          "notes": "Can cause significant respiratory depression"
+        }
+      },
+      "contraindications": ["Cardiac disease", "Respiratory compromise", "Pregnancy (late term)"],
+      "reversal": "Atipamezole (0.1-1 mg/kg)",
+      "storage": "Room temperature"
+    },
+    {
+      "name": "Isoflurane",
+      "class": "Inhalation anesthetic",
+      "dea_schedule": "Not scheduled",
+      "species_dosing": {
+        "mouse": {
+          "dose_range": "1-4% for induction, 1-2.5% maintenance",
+          "route": "Inhalation",
+          "onset": "1-2 minutes",
+          "duration": "Continuous administration",
+          "notes": "Requires precision vaporizer and scavenging system"
+        },
+        "rat": {
+          "dose_range": "2-5% for induction, 1-3% maintenance",
+          "route": "Inhalation",
+          "onset": "1-2 minutes",
+          "duration": "Continuous administration",
+          "notes": "Requires precision vaporizer and scavenging system"
+        },
+        "rabbit": {
+          "dose_range": "3-5% for induction, 1.5-3% maintenance",
+          "route": "Inhalation",
+          "onset": "1-2 minutes",
+          "duration": "Continuous administration",
+          "notes": "May require intubation for prolonged procedures"
+        }
+      },
+      "contraindications": ["Malignant hyperthermia susceptibility"],
+      "storage": "Room temperature, in original container"
+    },
+    {
+      "name": "Buprenorphine",
+      "class": "Opioid analgesic (partial agonist)",
+      "dea_schedule": "III",
+      "species_dosing": {
+        "mouse": {
+          "dose_range": "0.05-0.1 mg/kg",
+          "route": "SC or IP",
+          "onset": "15-30 minutes",
+          "duration": "6-12 hours",
+          "notes": "Extended release formulations available (72 hours)"
+        },
+        "rat": {
+          "dose_range": "0.01-0.05 mg/kg",
+          "route": "SC",
+          "onset": "15-30 minutes",
+          "duration": "6-12 hours",
+          "notes": "Extended release formulations available (72 hours)"
+        },
+        "rabbit": {
+          "dose_range": "0.01-0.05 mg/kg",
+          "route": "SC or IM",
+          "onset": "15-30 minutes",
+          "duration": "6-12 hours",
+          "notes": "May cause reduced GI motility"
+        }
+      },
+      "contraindications": ["Severe respiratory depression"],
+      "storage": "Room temperature, DEA-controlled storage required"
+    },
+    {
+      "name": "Carprofen",
+      "class": "NSAID (non-steroidal anti-inflammatory)",
+      "dea_schedule": "Not scheduled",
+      "species_dosing": {
+        "mouse": {
+          "dose_range": "5-10 mg/kg",
+          "route": "SC",
+          "onset": "30-60 minutes",
+          "duration": "12-24 hours",
+          "notes": "Good for mild to moderate pain"
+        },
+        "rat": {
+          "dose_range": "5 mg/kg",
+          "route": "SC",
+          "onset": "30-60 minutes",
+          "duration": "12-24 hours",
+          "notes": "Good for mild to moderate pain"
+        },
+        "rabbit": {
+          "dose_range": "2-4 mg/kg",
+          "route": "SC or PO",
+          "onset": "30-60 minutes",
+          "duration": "12-24 hours",
+          "notes": "Use with caution in animals with renal issues"
+        }
+      },
+      "contraindications": ["Renal disease", "GI ulceration", "Coagulation disorders"],
+      "storage": "Room temperature"
+    },
+    {
+      "name": "Meloxicam",
+      "class": "NSAID (non-steroidal anti-inflammatory)",
+      "dea_schedule": "Not scheduled",
+      "species_dosing": {
+        "mouse": {
+          "dose_range": "1-5 mg/kg",
+          "route": "SC or PO",
+          "onset": "30-60 minutes",
+          "duration": "24 hours",
+          "notes": "Once daily dosing"
+        },
+        "rat": {
+          "dose_range": "1-2 mg/kg",
+          "route": "SC or PO",
+          "onset": "30-60 minutes",
+          "duration": "24 hours",
+          "notes": "Once daily dosing"
+        },
+        "rabbit": {
+          "dose_range": "0.2-0.5 mg/kg",
+          "route": "SC or PO",
+          "onset": "30-60 minutes",
+          "duration": "24 hours",
+          "notes": "Good palatability for oral dosing"
+        }
+      },
+      "contraindications": ["Renal disease", "GI ulceration", "Dehydration"],
+      "storage": "Room temperature"
+    },
+    {
+      "name": "Atipamezole",
+      "class": "Alpha-2 adrenergic antagonist (reversal agent)",
+      "dea_schedule": "Not scheduled",
+      "species_dosing": {
+        "mouse": {
+          "dose_range": "1 mg/kg",
+          "route": "IP",
+          "onset": "5-10 minutes",
+          "duration": "N/A (reversal agent)",
+          "notes": "Reverses xylazine, medetomidine, dexmedetomidine"
+        },
+        "rat": {
+          "dose_range": "1 mg/kg",
+          "route": "IP or SC",
+          "onset": "5-10 minutes",
+          "duration": "N/A (reversal agent)",
+          "notes": "Reverses xylazine, medetomidine, dexmedetomidine"
+        },
+        "rabbit": {
+          "dose_range": "0.5-1 mg/kg",
+          "route": "IM or IV",
+          "onset": "5-10 minutes",
+          "duration": "N/A (reversal agent)",
+          "notes": "Reverses xylazine, medetomidine, dexmedetomidine"
+        }
+      },
+      "contraindications": ["None significant"],
+      "storage": "Room temperature"
+    },
+    {
+      "name": "Pentobarbital Sodium",
+      "class": "Barbiturate (euthanasia agent)",
+      "dea_schedule": "II",
+      "species_dosing": {
+        "mouse": {
+          "dose_range": "150-200 mg/kg",
+          "route": "IP",
+          "onset": "1-5 minutes",
+          "duration": "N/A (euthanasia)",
+          "notes": "AVMA-approved euthanasia method"
+        },
+        "rat": {
+          "dose_range": "150-200 mg/kg",
+          "route": "IP",
+          "onset": "1-5 minutes",
+          "duration": "N/A (euthanasia)",
+          "notes": "AVMA-approved euthanasia method"
+        },
+        "rabbit": {
+          "dose_range": "100-150 mg/kg",
+          "route": "IV",
+          "onset": "Seconds to 1 minute",
+          "duration": "N/A (euthanasia)",
+          "notes": "IV preferred; IP acceptable if IV not feasible"
+        }
+      },
+      "contraindications": ["Tissues for consumption"],
+      "storage": "Room temperature, DEA Schedule II controlled storage"
+    }
+  ],
+  "combination_protocols": [
+    {
+      "name": "Ketamine/Xylazine (Mouse)",
+      "components": [
+        {"drug": "Ketamine", "dose": "80-100 mg/kg", "route": "IP"},
+        {"drug": "Xylazine", "dose": "5-10 mg/kg", "route": "IP"}
+      ],
+      "indication": "Surgical anesthesia",
+      "duration": "20-40 minutes",
+      "reversal": "Atipamezole 1 mg/kg IP (reverses xylazine only)",
+      "notes": "Good muscle relaxation; supplement with isoflurane for prolonged procedures"
+    },
+    {
+      "name": "Ketamine/Xylazine (Rat)",
+      "components": [
+        {"drug": "Ketamine", "dose": "75-100 mg/kg", "route": "IP"},
+        {"drug": "Xylazine", "dose": "5-10 mg/kg", "route": "IP"}
+      ],
+      "indication": "Surgical anesthesia",
+      "duration": "20-40 minutes",
+      "reversal": "Atipamezole 1 mg/kg IP (reverses xylazine only)",
+      "notes": "Monitor respiratory rate; provide supplemental heat"
+    },
+    {
+      "name": "Multimodal Analgesia Protocol (Mouse/Rat)",
+      "components": [
+        {"drug": "Buprenorphine", "dose": "0.05-0.1 mg/kg", "route": "SC", "timing": "Pre-operative"},
+        {"drug": "Carprofen", "dose": "5 mg/kg", "route": "SC", "timing": "Pre-operative"}
+      ],
+      "indication": "Surgical pain management",
+      "duration": "24 hours (repeat as needed)",
+      "notes": "Opioid + NSAID provides superior analgesia; continue for 48-72 hours post-surgery"
+    }
+  ],
+  "emergency_drugs": [
+    {
+      "name": "Atropine",
+      "indication": "Bradycardia",
+      "dose": "0.02-0.05 mg/kg",
+      "route": "SC, IM, or IP",
+      "notes": "Have available during anesthesia"
+    },
+    {
+      "name": "Epinephrine",
+      "indication": "Cardiac arrest, anaphylaxis",
+      "dose": "0.01-0.02 mg/kg",
+      "route": "IV, IO, or intracardiac",
+      "notes": "Emergency use only"
+    },
+    {
+      "name": "Doxapram",
+      "indication": "Respiratory depression",
+      "dose": "5-10 mg/kg",
+      "route": "IV or IP",
+      "notes": "Respiratory stimulant"
+    }
+  ]
+}

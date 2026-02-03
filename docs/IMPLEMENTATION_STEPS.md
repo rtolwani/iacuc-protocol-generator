@@ -434,9 +434,9 @@ pytest tests/unit/test_statistical_consultant.py -v
 - If you don't have one, we'll create a sample formulary for testing
 
 **Tasks**:
-- [ ] Create sample formulary if needed
-- [ ] Ingest formulary into vector store with drug-specific chunking
-- [ ] Create `src/tools/formulary_tool.py`
+- [x] Create sample formulary if needed
+- [x] Ingest formulary into vector store with drug-specific chunking
+- [x] Create `src/tools/formulary_tool.py`
 
 **Verification**:
 ```bash

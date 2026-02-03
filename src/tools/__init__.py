@@ -31,6 +31,10 @@ from src.tools.power_analysis_tool import (
     perform_power_analysis,
     EFFECT_SIZE_GUIDELINES,
 )
+from src.tools.formulary_tool import (
+    FormularyLookupTool,
+    DrugFormulary,
+)
 
 __all__ = [
     "RegulatorySearchTool",
@@ -50,4 +54,6 @@ __all__ = [
     "PowerAnalysisTool",
     "perform_power_analysis",
     "EFFECT_SIZE_GUIDELINES",
+    "FormularyLookupTool",
+    "DrugFormulary",
 ]
