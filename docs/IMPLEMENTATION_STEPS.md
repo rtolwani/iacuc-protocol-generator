@@ -221,10 +221,10 @@ pytest tests/unit/test_crewai_setup.py -v
 **Goal**: Have a tool that measures text reading level
 
 **Tasks**:
-- [ ] Create `src/tools/readability_tools.py`
-- [ ] Implement Flesch-Kincaid grade level calculation
-- [ ] Add suggestions for simplification
-- [ ] Write tests with sample texts
+- [x] Create `src/tools/readability_tools.py`
+- [x] Implement Flesch-Kincaid grade level calculation
+- [x] Add suggestions for simplification
+- [x] Write tests with sample texts
 
 **Verification**:
 ```bash

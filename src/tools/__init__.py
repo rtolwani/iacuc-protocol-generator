@@ -9,9 +9,17 @@ from src.tools.rag_tools import (
     SpeciesGuidanceTool,
     EuthanasiaMethodTool,
 )
+from src.tools.readability_tools import (
+    ReadabilityScoreTool,
+    analyze_readability,
+    suggest_replacements,
+)
 
 __all__ = [
     "RegulatorySearchTool",
     "SpeciesGuidanceTool",
     "EuthanasiaMethodTool",
+    "ReadabilityScoreTool",
+    "analyze_readability",
+    "suggest_replacements",
 ]
