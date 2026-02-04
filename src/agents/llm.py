@@ -8,6 +8,11 @@ from langchain_anthropic import ChatAnthropic
 
 from src.config import get_settings
 
+# Model tiers for different task complexities
+FAST_MODEL = "claude-3-haiku-20240307"  # Fast, good for simple tasks
+STANDARD_MODEL = "claude-sonnet-4-20250514"  # Balanced
+ADVANCED_MODEL = "claude-sonnet-4-20250514"  # Complex reasoning
+
 
 def get_llm() -> ChatAnthropic:
     """
@@ -61,5 +66,50 @@ def get_llm_for_task(
         model=settings.default_model,
         temperature=temperature if temperature is not None else settings.llm_temperature,
         max_tokens=max_tokens if max_tokens is not None else settings.llm_max_tokens,
+        anthropic_api_key=settings.anthropic_api_key,
+    )
+
+
+def get_fast_llm(max_tokens: int = 1024) -> ChatAnthropic:
+    """
+    Get a fast LLM (Haiku) for simpler tasks.
+    
+    ~10x faster than Sonnet, good for:
+    - Intake/extraction tasks
+    - Simple summaries
+    - Formatting tasks
+    
+    Returns:
+        ChatAnthropic instance with Haiku model.
+    """
+    settings = get_settings()
+    
+    if not settings.anthropic_api_key:
+        raise ValueError("Anthropic API key not configured.")
+    
+    return ChatAnthropic(
+        model=FAST_MODEL,
+        temperature=0.2,
+        max_tokens=max_tokens,
+        anthropic_api_key=settings.anthropic_api_key,
+    )
+
+
+def get_standard_llm(max_tokens: int = 2048) -> ChatAnthropic:
+    """
+    Get standard LLM (Sonnet) for balanced tasks.
+    
+    Returns:
+        ChatAnthropic instance with Sonnet model.
+    """
+    settings = get_settings()
+    
+    if not settings.anthropic_api_key:
+        raise ValueError("Anthropic API key not configured.")
+    
+    return ChatAnthropic(
+        model=STANDARD_MODEL,
+        temperature=0.3,
+        max_tokens=max_tokens,
         anthropic_api_key=settings.anthropic_api_key,
     )
