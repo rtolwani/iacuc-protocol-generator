@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
+import { ChevronDown, ChevronUp, Brain, CheckCircle, AlertTriangle } from "lucide-react";
 import api from "@/lib/api";
 
 interface HumaneEndpoint {
@@ -61,18 +62,102 @@ const statusColors: Record<string, string> = {
   terminated: "bg-red-600",
 };
 
+interface AIReviewResults {
+  success: boolean;
+  protocol_id: string;
+  agent_outputs: Record<string, string>;
+  errors: string[];
+  reviewed_at?: string;
+}
+
+const agentLabels: Record<string, { name: string; description: string }> = {
+  intake: { name: "Protocol Intake", description: "Extracts key parameters from submission" },
+  lay_summary: { name: "Lay Summary", description: "Generates plain-language summary" },
+  statistics: { name: "Statistical Review", description: "Evaluates sample size justification" },
+  regulatory: { name: "Regulatory Compliance", description: "Checks USDA/PHS requirements" },
+  veterinary: { name: "Veterinary Review", description: "Assesses animal health considerations" },
+  alternatives: { name: "3Rs Assessment", description: "Reviews replacement, reduction, refinement" },
+  procedures: { name: "Procedures Review", description: "Evaluates experimental procedures" },
+  assembly: { name: "Protocol Assembly", description: "Generates complete IACUC protocol" },
+};
+
 export default function ProtocolDetailPage() {
   const params = useParams();
   const router = useRouter();
   const [protocol, setProtocol] = useState<Protocol | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [aiResults, setAIResults] = useState<AIReviewResults | null>(null);
+  const [expandedAgents, setExpandedAgents] = useState<Set<string>>(new Set());
+  const [loadingAI, setLoadingAI] = useState(false);
+
+  const toggleAgent = (agent: string) => {
+    const newExpanded = new Set(expandedAgents);
+    if (newExpanded.has(agent)) {
+      newExpanded.delete(agent);
+    } else {
+      newExpanded.add(agent);
+    }
+    setExpandedAgents(newExpanded);
+  };
+
+  const expandAll = () => {
+    if (aiResults) {
+      setExpandedAgents(new Set(Object.keys(aiResults.agent_outputs)));
+    }
+  };
+
+  const collapseAll = () => {
+    setExpandedAgents(new Set());
+  };
 
   useEffect(() => {
     const fetchProtocol = async () => {
       try {
-        const data = await api.getProtocol(params.id as string);
-        setProtocol(data);
+        const rawData = await api.getProtocol(params.id as string);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const data = rawData as any;
+        // Map API response to component's Protocol interface
+        const mappedProtocol: Protocol = {
+          id: data.id,
+          title: data.title,
+          status: data.status,
+          pi_name: data.principal_investigator?.name || data.pi_name || "",
+          pi_email: data.principal_investigator?.email || data.pi_email || "",
+          department: data.principal_investigator?.department || data.department || "",
+          funding_sources: data.funding_sources || "",
+          study_duration: data.study_duration || "",
+          lay_summary: data.lay_summary || "",
+          created_at: data.created_at || new Date().toISOString(),
+          animals: data.animals?.map((a: Record<string, unknown>) => ({
+            species: a.species || "",
+            strain: a.strain || "",
+            sex: a.sex || "",
+            total_number: a.total_number || 0,
+            source: a.source || "",
+            genetic_modification: a.genetic_modification || "",
+          })),
+          scientific_objectives: data.scientific_objectives,
+          scientific_rationale: data.scientific_rationale,
+          potential_benefits: data.potential_benefits,
+          experimental_design: data.experimental_design,
+          statistical_methods: data.statistical_methods,
+          euthanasia_method: data.euthanasia_method,
+          replacement_statement: data.replacement_statement,
+          reduction_statement: data.reduction_statement,
+          refinement_statement: data.refinement_statement,
+          humane_endpoints: data.humane_endpoints,
+          monitoring_schedule: data.monitoring_schedule,
+        };
+        setProtocol(mappedProtocol);
+        
+        // Fetch AI results if protocol is under review or later
+        if (["under_review", "approved", "rejected", "revision_requested"].includes(data.status)) {
+          const results = await api.getAIResults(params.id as string);
+          if (results) {
+            setAIResults(results);
+          }
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load protocol");
       } finally {
@@ -150,27 +235,117 @@ export default function ProtocolDetailPage() {
           <Button 
             onClick={async () => {
               try {
-                setLoading(true);
+                setLoadingAI(true);
                 setError(null);
                 const result = await api.runAICrew(protocol.id, false);
                 if (result.success) {
                   setProtocol({ ...protocol, status: "under_review" });
-                  alert("AI Review completed! Check the Review page for results.");
+                  setAIResults(result);
                 } else {
                   setError(result.message || "AI review failed");
                 }
               } catch (err) {
                 setError(err instanceof Error ? err.message : "Failed to run AI review");
               } finally {
-                setLoading(false);
+                setLoadingAI(false);
               }
             }}
-            disabled={loading}
+            disabled={loadingAI}
           >
-            {loading ? "Running AI Review..." : "Run AI Review"}
+            {loadingAI ? "Running AI Review..." : "Run AI Review"}
           </Button>
         )}
       </div>
+
+      {/* AI Review Results */}
+      {aiResults && aiResults.success && (
+        <Card className="border-blue-200 bg-blue-50/50">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Brain className="h-5 w-5 text-blue-600" />
+                <CardTitle className="text-blue-900">AI Review Results</CardTitle>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="ghost" size="sm" onClick={expandAll}>
+                  Expand All
+                </Button>
+                <Button variant="ghost" size="sm" onClick={collapseAll}>
+                  Collapse All
+                </Button>
+              </div>
+            </div>
+            <CardDescription>
+              Analysis from {Object.keys(aiResults.agent_outputs).length} AI agents
+              {aiResults.reviewed_at && ` • Reviewed ${new Date(aiResults.reviewed_at).toLocaleString()}`}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {Object.entries(aiResults.agent_outputs).map(([agent, output]) => {
+              const info = agentLabels[agent] || { name: agent, description: "" };
+              const isExpanded = expandedAgents.has(agent);
+              
+              return (
+                <div key={agent} className="bg-white rounded-lg border">
+                  <button
+                    onClick={() => toggleAgent(agent)}
+                    className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <div className="text-left">
+                        <p className="font-medium">{info.name}</p>
+                        <p className="text-sm text-muted-foreground">{info.description}</p>
+                      </div>
+                    </div>
+                    {isExpanded ? (
+                      <ChevronUp className="h-5 w-5 text-gray-400" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-400" />
+                    )}
+                  </button>
+                  {isExpanded && (
+                    <div className="px-4 pb-4 border-t">
+                      <div className="mt-3 bg-gray-50 rounded p-4 text-sm whitespace-pre-wrap font-mono max-h-96 overflow-y-auto">
+                        {output || "No output available"}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+            
+            {aiResults.errors && aiResults.errors.length > 0 && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertTriangle className="h-4 w-4 text-red-600" />
+                  <p className="font-medium text-red-900">Errors during review</p>
+                </div>
+                <ul className="list-disc list-inside text-sm text-red-700">
+                  {aiResults.errors.map((err, i) => (
+                    <li key={i}>{err}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Loading AI indicator */}
+      {loadingAI && (
+        <Card className="border-yellow-200 bg-yellow-50/50">
+          <CardContent className="py-8">
+            <div className="flex items-center justify-center gap-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600"></div>
+              <div>
+                <p className="font-medium text-yellow-900">AI Review in Progress</p>
+                <p className="text-sm text-yellow-700">This typically takes 60-90 seconds...</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Basic Information */}
       <Card>
