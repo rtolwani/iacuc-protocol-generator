@@ -75,12 +75,10 @@ async def root():
     }
 
 
-# TODO: Import and include routers as they are created
-# from src.api.routes import protocols, questionnaire, review, documents
-# app.include_router(protocols.router, prefix="/api/v1/protocols", tags=["protocols"])
-# app.include_router(questionnaire.router, prefix="/api/v1/questionnaire", tags=["questionnaire"])
-# app.include_router(review.router, prefix="/api/v1/review", tags=["review"])
-# app.include_router(documents.router, prefix="/api/v1/documents", tags=["documents"])
+# Import and include routers
+from src.api.routes import protocols, review
+app.include_router(protocols.router, prefix="/api/v1", tags=["protocols"])
+app.include_router(review.router, prefix="/api/v1", tags=["review"])
 
 
 if __name__ == "__main__":
