@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
-import { ChevronDown, ChevronUp, Brain, CheckCircle, AlertTriangle } from "lucide-react";
+import { ChevronDown, ChevronUp, Brain, CheckCircle, AlertTriangle, ArrowRight, Check, Eye } from "lucide-react";
 import api from "@/lib/api";
 
 interface HumaneEndpoint {
@@ -63,11 +63,13 @@ const statusColors: Record<string, string> = {
 };
 
 interface AIReviewResults {
-  success: boolean;
-  protocol_id: string;
+  status?: string;
+  success?: boolean;
+  protocol_id?: string;
   agent_outputs: Record<string, string>;
   errors: string[];
   reviewed_at?: string;
+  message?: string;
 }
 
 const agentLabels: Record<string, { name: string; description: string }> = {
@@ -90,6 +92,17 @@ export default function ProtocolDetailPage() {
   const [aiResults, setAIResults] = useState<AIReviewResults | null>(null);
   const [expandedAgents, setExpandedAgents] = useState<Set<string>>(new Set());
   const [loadingAI, setLoadingAI] = useState(false);
+  const [comparisonData, setComparisonData] = useState<Array<{
+    agent: string;
+    field: string;
+    description: string;
+    original_value: string;
+    ai_suggestion: string;
+    secondary_fields: string[];
+  }>>([]);
+  const [appliedAgents, setAppliedAgents] = useState<Set<string>>(new Set());
+  const [applyingAgent, setApplyingAgent] = useState<string | null>(null);
+  const [showComparison, setShowComparison] = useState<string | null>(null);
 
   const toggleAgent = (agent: string) => {
     const newExpanded = new Set(expandedAgents);
@@ -109,6 +122,61 @@ export default function ProtocolDetailPage() {
 
   const collapseAll = () => {
     setExpandedAgents(new Set());
+  };
+
+  const handleApplySuggestion = async (agent: string) => {
+    if (!protocol) return;
+    setApplyingAgent(agent);
+    try {
+      const result = await api.applySuggestion(protocol.id, agent);
+      if (result.success) {
+        setAppliedAgents(new Set([...appliedAgents, agent]));
+        // Refresh protocol data
+        const updatedProtocol = await api.getProtocol(protocol.id);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const data = updatedProtocol as any;
+        const mappedProtocol: Protocol = {
+          id: data.id,
+          title: data.title,
+          status: data.status,
+          pi_name: data.principal_investigator?.name || data.pi_name || "",
+          pi_email: data.principal_investigator?.email || data.pi_email || "",
+          department: data.principal_investigator?.department || data.department || "",
+          funding_sources: data.funding_sources || "",
+          study_duration: data.study_duration || "",
+          lay_summary: data.lay_summary || "",
+          created_at: data.created_at || new Date().toISOString(),
+          animals: data.animals?.map((a: Record<string, unknown>) => ({
+            species: a.species || "",
+            strain: a.strain || "",
+            sex: a.sex || "",
+            total_number: a.total_number || 0,
+            source: a.source || "",
+            genetic_modification: a.genetic_modification || "",
+          })),
+          scientific_objectives: data.scientific_objectives,
+          scientific_rationale: data.scientific_rationale,
+          potential_benefits: data.potential_benefits,
+          experimental_design: data.experimental_design,
+          statistical_methods: data.statistical_methods,
+          euthanasia_method: data.euthanasia_method,
+          replacement_statement: data.replacement_statement,
+          reduction_statement: data.reduction_statement,
+          refinement_statement: data.refinement_statement,
+          humane_endpoints: data.humane_endpoints,
+          monitoring_schedule: data.monitoring_schedule,
+        };
+        setProtocol(mappedProtocol);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to apply suggestion");
+    } finally {
+      setApplyingAgent(null);
+    }
+  };
+
+  const getComparisonForAgent = (agent: string) => {
+    return comparisonData.find(c => c.agent === agent);
   };
 
   useEffect(() => {
@@ -156,6 +224,15 @@ export default function ProtocolDetailPage() {
           const results = await api.getAIResults(params.id as string);
           if (results) {
             setAIResults(results);
+          }
+          // Also fetch comparison data
+          try {
+            const comparison = await api.getComparisonData(params.id as string);
+            if (comparison.comparisons) {
+              setComparisonData(comparison.comparisons);
+            }
+          } catch {
+            // Comparison data is optional
           }
         }
       } catch (err) {
@@ -258,7 +335,7 @@ export default function ProtocolDetailPage() {
       </div>
 
       {/* AI Review Results */}
-      {aiResults && aiResults.success && (
+      {aiResults && (aiResults.success || aiResults.status === "complete") && (
         <Card className="border-blue-200 bg-blue-50/50">
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -284,27 +361,112 @@ export default function ProtocolDetailPage() {
             {Object.entries(aiResults.agent_outputs).map(([agent, output]) => {
               const info = agentLabels[agent] || { name: agent, description: "" };
               const isExpanded = expandedAgents.has(agent);
+              const comparison = getComparisonForAgent(agent);
+              const isApplied = appliedAgents.has(agent);
+              const isApplying = applyingAgent === agent;
+              const isShowingComparison = showComparison === agent;
               
               return (
                 <div key={agent} className="bg-white rounded-lg border">
-                  <button
-                    onClick={() => toggleAgent(agent)}
-                    className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      <div className="text-left">
+                  <div className="p-4 flex items-center justify-between">
+                    <button
+                      onClick={() => toggleAgent(agent)}
+                      className="flex items-center gap-3 flex-1 text-left hover:opacity-80"
+                    >
+                      {isApplied ? (
+                        <Check className="h-4 w-4 text-green-600" />
+                      ) : (
+                        <CheckCircle className="h-4 w-4 text-blue-600" />
+                      )}
+                      <div>
                         <p className="font-medium">{info.name}</p>
                         <p className="text-sm text-muted-foreground">{info.description}</p>
                       </div>
+                    </button>
+                    <div className="flex items-center gap-2">
+                      {comparison && !isApplied && (
+                        <>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setShowComparison(isShowingComparison ? null : agent)}
+                          >
+                            <Eye className="h-4 w-4 mr-1" />
+                            Compare
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={() => handleApplySuggestion(agent)}
+                            disabled={isApplying}
+                            className="bg-green-600 hover:bg-green-700"
+                          >
+                            {isApplying ? (
+                              <>Applying...</>
+                            ) : (
+                              <>
+                                <ArrowRight className="h-4 w-4 mr-1" />
+                                Apply
+                              </>
+                            )}
+                          </Button>
+                        </>
+                      )}
+                      {isApplied && (
+                        <Badge className="bg-green-100 text-green-800">Applied</Badge>
+                      )}
+                      <button onClick={() => toggleAgent(agent)}>
+                        {isExpanded ? (
+                          <ChevronUp className="h-5 w-5 text-gray-400" />
+                        ) : (
+                          <ChevronDown className="h-5 w-5 text-gray-400" />
+                        )}
+                      </button>
                     </div>
-                    {isExpanded ? (
-                      <ChevronUp className="h-5 w-5 text-gray-400" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-400" />
-                    )}
-                  </button>
-                  {isExpanded && (
+                  </div>
+                  
+                  {/* Comparison View */}
+                  {isShowingComparison && comparison && (
+                    <div className="px-4 pb-4 border-t bg-amber-50">
+                      <div className="mt-3 grid md:grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-sm font-medium text-gray-700 mb-2">Original Value</p>
+                          <div className="bg-white border rounded p-3 text-sm max-h-48 overflow-y-auto">
+                            {comparison.original_value || "(not set)"}
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-green-700 mb-2">AI Suggestion</p>
+                          <div className="bg-green-50 border border-green-200 rounded p-3 text-sm max-h-48 overflow-y-auto whitespace-pre-wrap">
+                            {comparison.ai_suggestion.substring(0, 500)}
+                            {comparison.ai_suggestion.length > 500 && "..."}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-3 flex justify-end gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowComparison(null)}
+                        >
+                          Close
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            handleApplySuggestion(agent);
+                            setShowComparison(null);
+                          }}
+                          disabled={isApplying}
+                          className="bg-green-600 hover:bg-green-700"
+                        >
+                          Apply This Suggestion
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Full Output View */}
+                  {isExpanded && !isShowingComparison && (
                     <div className="px-4 pb-4 border-t">
                       <div className="mt-3 bg-gray-50 rounded p-4 text-sm whitespace-pre-wrap font-mono max-h-96 overflow-y-auto">
                         {output || "No output available"}

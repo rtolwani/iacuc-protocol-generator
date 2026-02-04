@@ -594,6 +594,253 @@ async def get_ai_results(protocol_id: str) -> dict:
 
 
 # ============================================================================
+# APPLY AI SUGGESTIONS
+# ============================================================================
+
+class ApplySuggestionRequest(BaseModel):
+    """Request to apply AI suggestion to a protocol field."""
+    agent: str = Field(description="Agent name (e.g., 'lay_summary', 'alternatives')")
+    field: Optional[str] = Field(default=None, description="Specific field to update (optional)")
+
+
+class ApplySuggestionResponse(BaseModel):
+    """Response from applying AI suggestion."""
+    success: bool
+    protocol_id: str
+    field_updated: str
+    old_value: Optional[str] = None
+    new_value: str
+    message: str
+
+
+# Mapping of agents to protocol fields
+AGENT_FIELD_MAPPING = {
+    "lay_summary": {
+        "primary_field": "lay_summary",
+        "description": "Plain-language summary of the study",
+    },
+    "statistics": {
+        "primary_field": "statistical_methods",
+        "secondary_fields": ["animal_number_justification", "power_analysis"],
+        "description": "Statistical analysis and sample size justification",
+    },
+    "regulatory": {
+        "primary_field": "usda_category_notes",  # We'll store as notes since category is enum
+        "description": "USDA category and regulatory compliance notes",
+    },
+    "veterinary": {
+        "primary_field": "monitoring_schedule",
+        "secondary_fields": ["veterinary_review_notes"],
+        "description": "Veterinary care and monitoring protocols",
+    },
+    "alternatives": {
+        "primary_field": "replacement_statement",
+        "secondary_fields": ["reduction_statement", "refinement_statement"],
+        "description": "3Rs documentation (Replacement, Reduction, Refinement)",
+    },
+    "procedures": {
+        "primary_field": "experimental_design",
+        "description": "Detailed experimental procedures",
+    },
+    "assembly": {
+        "primary_field": "assembled_protocol",
+        "description": "Complete assembled protocol document",
+    },
+}
+
+
+@router.post("/protocols/{protocol_id}/apply-suggestion")
+async def apply_ai_suggestion(
+    protocol_id: str,
+    request: ApplySuggestionRequest,
+) -> ApplySuggestionResponse:
+    """
+    Apply an AI suggestion to update a protocol field.
+    
+    This takes the output from a specific AI agent and applies it
+    to the corresponding protocol field.
+    """
+    from src.api.routes.protocols import ProtocolStorage
+    from pathlib import Path
+    import json
+    
+    # Load protocol
+    storage = ProtocolStorage()
+    protocol = storage.load(protocol_id)
+    
+    if not protocol:
+        raise HTTPException(status_code=404, detail="Protocol not found")
+    
+    # Load AI results
+    results_path = Path("ai_review_results") / f"{protocol_id}.json"
+    if not results_path.exists():
+        raise HTTPException(status_code=404, detail="AI review results not found")
+    
+    try:
+        ai_data = json.loads(results_path.read_text())
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error reading AI results: {e}")
+    
+    agent_outputs = ai_data.get("agent_outputs", {})
+    
+    if request.agent not in agent_outputs:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Agent '{request.agent}' not found in AI results. Available: {list(agent_outputs.keys())}"
+        )
+    
+    ai_output = agent_outputs[request.agent]
+    
+    # Get field mapping
+    mapping = AGENT_FIELD_MAPPING.get(request.agent)
+    if not mapping:
+        raise HTTPException(
+            status_code=400,
+            detail=f"No field mapping for agent '{request.agent}'"
+        )
+    
+    # Determine which field to update
+    field_to_update = request.field or mapping["primary_field"]
+    
+    # Get old value
+    old_value = None
+    if hasattr(protocol, field_to_update):
+        old_value = getattr(protocol, field_to_update)
+        if isinstance(old_value, (list, dict)):
+            old_value = str(old_value)
+    
+    # Apply the update based on field type
+    try:
+        if field_to_update == "lay_summary":
+            protocol.lay_summary = ai_output
+        elif field_to_update == "statistical_methods":
+            protocol.statistical_methods = ai_output
+        elif field_to_update == "animal_number_justification":
+            protocol.animal_number_justification = ai_output
+        elif field_to_update == "power_analysis":
+            protocol.power_analysis = ai_output
+        elif field_to_update == "monitoring_schedule":
+            protocol.monitoring_schedule = ai_output
+        elif field_to_update == "replacement_statement":
+            # Parse the 3Rs output and extract replacement section
+            protocol.replacement_statement = _extract_section(ai_output, "Replacement", ai_output)
+        elif field_to_update == "reduction_statement":
+            protocol.reduction_statement = _extract_section(ai_output, "Reduction", ai_output)
+        elif field_to_update == "refinement_statement":
+            protocol.refinement_statement = _extract_section(ai_output, "Refinement", ai_output)
+        elif field_to_update == "experimental_design":
+            protocol.experimental_design = ai_output
+        else:
+            # For fields that don't exist in schema, store in extra data
+            if not hasattr(protocol, '_ai_applied'):
+                protocol.__dict__['_ai_applied'] = {}
+            protocol.__dict__['_ai_applied'][field_to_update] = ai_output
+        
+        # Save updated protocol
+        storage.save(protocol)
+        
+        return ApplySuggestionResponse(
+            success=True,
+            protocol_id=protocol_id,
+            field_updated=field_to_update,
+            old_value=old_value[:200] + "..." if old_value and len(old_value) > 200 else old_value,
+            new_value=ai_output[:500] + "..." if len(ai_output) > 500 else ai_output,
+            message=f"Successfully applied {request.agent} output to {field_to_update}"
+        )
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error applying suggestion: {str(e)}"
+        )
+
+
+@router.get("/protocols/{protocol_id}/comparison")
+async def get_comparison_data(protocol_id: str) -> dict:
+    """
+    Get side-by-side comparison data for all fields with AI suggestions.
+    
+    Returns original values alongside AI-generated suggestions for review.
+    """
+    from src.api.routes.protocols import ProtocolStorage
+    from pathlib import Path
+    import json
+    
+    # Load protocol
+    storage = ProtocolStorage()
+    protocol = storage.load(protocol_id)
+    
+    if not protocol:
+        raise HTTPException(status_code=404, detail="Protocol not found")
+    
+    # Load AI results
+    results_path = Path("ai_review_results") / f"{protocol_id}.json"
+    if not results_path.exists():
+        return {
+            "protocol_id": protocol_id,
+            "comparisons": [],
+            "message": "No AI review results available"
+        }
+    
+    try:
+        ai_data = json.loads(results_path.read_text())
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error reading AI results: {e}")
+    
+    agent_outputs = ai_data.get("agent_outputs", {})
+    
+    comparisons = []
+    
+    # Build comparison data for each agent
+    for agent, mapping in AGENT_FIELD_MAPPING.items():
+        if agent not in agent_outputs:
+            continue
+        
+        ai_output = agent_outputs[agent]
+        field = mapping["primary_field"]
+        
+        # Get original value
+        original = None
+        if hasattr(protocol, field):
+            original = getattr(protocol, field)
+            if isinstance(original, (list, dict)):
+                original = str(original)
+        
+        comparisons.append({
+            "agent": agent,
+            "field": field,
+            "description": mapping["description"],
+            "original_value": original or "(not set)",
+            "ai_suggestion": ai_output,
+            "secondary_fields": mapping.get("secondary_fields", []),
+        })
+    
+    return {
+        "protocol_id": protocol_id,
+        "comparisons": comparisons,
+    }
+
+
+def _extract_section(text: str, section_name: str, default: str) -> str:
+    """Extract a named section from markdown text."""
+    import re
+    
+    # Try to find section header
+    patterns = [
+        rf"##\s*\*?\*?{section_name}\*?\*?\s*\n(.*?)(?=##|\Z)",
+        rf"\*\*{section_name}\*\*\s*\n(.*?)(?=\*\*|\Z)",
+        rf"{section_name}:\s*\n(.*?)(?=\n\n|\Z)",
+    ]
+    
+    for pattern in patterns:
+        match = re.search(pattern, text, re.IGNORECASE | re.DOTALL)
+        if match:
+            return match.group(1).strip()
+    
+    return default
+
+
+# ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
 

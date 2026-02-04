@@ -213,6 +213,36 @@ class ApiClient {
     }
   }
 
+  // Get Comparison Data
+  async getComparisonData(protocolId: string): Promise<{
+    protocol_id: string;
+    comparisons: Array<{
+      agent: string;
+      field: string;
+      description: string;
+      original_value: string;
+      ai_suggestion: string;
+      secondary_fields: string[];
+    }>;
+  }> {
+    return this.request(`/review/protocols/${protocolId}/comparison`);
+  }
+
+  // Apply AI Suggestion
+  async applySuggestion(protocolId: string, agent: string, field?: string): Promise<{
+    success: boolean;
+    protocol_id: string;
+    field_updated: string;
+    old_value: string | null;
+    new_value: string;
+    message: string;
+  }> {
+    return this.request(`/review/protocols/${protocolId}/apply-suggestion`, {
+      method: "POST",
+      body: JSON.stringify({ agent, field }),
+    });
+  }
+
   // Health check
   async healthCheck(): Promise<{ status: string; version: string }> {
     const response = await fetch(`${this.baseUrl.replace("/api/v1", "")}/health`);
