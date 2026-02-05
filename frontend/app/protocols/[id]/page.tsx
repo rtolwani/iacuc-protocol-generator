@@ -344,7 +344,7 @@ export default function ProtocolDetailPage() {
             Submit for Review
           </Button>
         )}
-        {protocol.status === "submitted" && (
+        {(protocol.status === "submitted" || protocol.status === "draft") && (
           <Button 
             onClick={async () => {
               try {
@@ -353,7 +353,23 @@ export default function ProtocolDetailPage() {
                 const result = await api.runAICrew(protocol.id, false);
                 if (result.success) {
                   setProtocol({ ...protocol, status: "under_review" });
-                  setAIResults(result);
+                  // Set AI results with proper format for display
+                  setAIResults({
+                    status: "complete",
+                    success: true,
+                    agent_outputs: result.agent_outputs,
+                    errors: result.errors,
+                    reviewed_at: new Date().toISOString(),
+                  });
+                  // Also fetch comparison data
+                  try {
+                    const comparison = await api.getComparisonData(protocol.id);
+                    if (comparison.comparisons) {
+                      setComparisonData(comparison.comparisons);
+                    }
+                  } catch {
+                    // Comparison data is optional
+                  }
                 } else {
                   setError(result.message || "AI review failed");
                 }
@@ -365,7 +381,7 @@ export default function ProtocolDetailPage() {
             }}
             disabled={loadingAI}
           >
-            {loadingAI ? "Running AI Review..." : "Run AI Review"}
+            {loadingAI ? "Running AI Review (~80s)..." : "Run AI Review"}
           </Button>
         )}
       </div>

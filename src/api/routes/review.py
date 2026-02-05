@@ -469,13 +469,14 @@ async def run_ai_crew(
     7. Procedure Writer - Writes procedures
     8. Protocol Assembler - Compiles document
     
-    Note: For a quick demo, this returns immediately after updating status.
-    In production, use a task queue (Celery/RQ) for background processing.
+    Uses the fast parallel execution mode (~80 seconds).
     """
     from src.api.routes.protocols import ProtocolStorage
     from src.protocol.schema import ProtocolStatus
-    import asyncio
-    import threading
+    from src.agents.crew import generate_protocol_fast, ProtocolInput
+    from pathlib import Path
+    from datetime import datetime
+    import json
     
     # Load protocol
     storage = ProtocolStorage()
@@ -485,77 +486,80 @@ async def run_ai_crew(
         raise HTTPException(status_code=404, detail="Protocol not found")
     
     # Check status
-    if protocol.status.value not in ["submitted", "under_review"]:
+    if protocol.status.value not in ["submitted", "under_review", "draft"]:
         raise HTTPException(
             status_code=400,
             detail=f"Protocol must be submitted for review. Current status: {protocol.status.value}"
         )
     
-    # Update status to under_review immediately
+    # Update status to under_review
     protocol.status = ProtocolStatus.UNDER_REVIEW
     storage.save(protocol)
     
-    # Run crew in background thread to avoid blocking
-    def run_crew_background():
-        from src.agents.crew import generate_protocol, ProtocolInput
-        import json
-        from pathlib import Path
+    try:
+        # Build crew input from protocol
+        animals = protocol.animals
+        species = animals[0].species if animals else "Unknown"
+        strain = animals[0].strain if animals and animals[0].strain else None
+        total_animals = sum(a.total_number for a in animals) if animals else 0
         
-        try:
-            # Build crew input from protocol
-            animals = protocol.animals
-            species = animals[0].species if animals else "Unknown"
-            strain = animals[0].strain if animals and animals[0].strain else None
-            total_animals = sum(a.total_number for a in animals) if animals else 0
-            
-            crew_input = ProtocolInput(
-                title=protocol.title,
-                pi_name=protocol.principal_investigator.name,
-                species=species,
-                strain=strain,
-                total_animals=total_animals,
-                research_description=protocol.scientific_objectives or protocol.lay_summary,
-                procedures=protocol.experimental_design or "To be determined",
-                study_duration=protocol.study_duration,
-                primary_endpoint=None,
-            )
-            
-            # Run the crew
-            result = generate_protocol(crew_input, verbose=request.verbose)
-            
-            # Save results to a file for later retrieval
-            results_path = Path("ai_review_results") / f"{protocol_id}.json"
-            results_path.parent.mkdir(exist_ok=True)
-            results_path.write_text(json.dumps({
-                "success": result.success,
-                "agent_outputs": result.agent_outputs,
-                "errors": result.errors,
-            }, indent=2))
-            
-            print(f"AI Review completed for protocol {protocol_id}")
-            
-        except Exception as e:
-            print(f"AI Review failed for protocol {protocol_id}: {e}")
-            # Save error
-            results_path = Path("ai_review_results") / f"{protocol_id}.json"
-            results_path.parent.mkdir(exist_ok=True)
-            results_path.write_text(json.dumps({
-                "success": False,
-                "agent_outputs": {},
-                "errors": [str(e)],
-            }, indent=2))
-    
-    # Start background thread
-    thread = threading.Thread(target=run_crew_background, daemon=True)
-    thread.start()
-    
-    return RunCrewResponse(
-        success=True,
-        protocol_id=protocol_id,
-        agent_outputs={},
-        errors=[],
-        message="AI review started in background. Status updated to 'under_review'. Check back in 1-3 minutes for results."
-    )
+        crew_input = ProtocolInput(
+            title=protocol.title,
+            pi_name=protocol.principal_investigator.name,
+            species=species,
+            strain=strain,
+            total_animals=total_animals,
+            research_description=protocol.scientific_objectives or protocol.lay_summary,
+            procedures=protocol.experimental_design or "To be determined",
+            study_duration=protocol.study_duration,
+            primary_endpoint=None,
+        )
+        
+        # Run the fast crew (parallel execution, ~80 seconds)
+        print(f"Starting AI Review for protocol {protocol_id}...")
+        result = generate_protocol_fast(crew_input, verbose=request.verbose)
+        
+        # Save results to a file
+        results_path = Path("ai_review_results") / f"{protocol_id}.json"
+        results_path.parent.mkdir(exist_ok=True)
+        results_path.write_text(json.dumps({
+            "success": result.success,
+            "protocol_id": protocol_id,
+            "agent_outputs": result.agent_outputs,
+            "errors": result.errors,
+            "reviewed_at": datetime.now().isoformat(),
+        }, indent=2))
+        
+        print(f"AI Review completed for protocol {protocol_id}")
+        
+        return RunCrewResponse(
+            success=result.success,
+            protocol_id=protocol_id,
+            agent_outputs=result.agent_outputs,
+            errors=result.errors,
+            message="AI review completed successfully!" if result.success else "AI review completed with errors."
+        )
+        
+    except Exception as e:
+        print(f"AI Review failed for protocol {protocol_id}: {e}")
+        # Save error
+        results_path = Path("ai_review_results") / f"{protocol_id}.json"
+        results_path.parent.mkdir(exist_ok=True)
+        results_path.write_text(json.dumps({
+            "success": False,
+            "protocol_id": protocol_id,
+            "agent_outputs": {},
+            "errors": [str(e)],
+            "reviewed_at": datetime.now().isoformat(),
+        }, indent=2))
+        
+        return RunCrewResponse(
+            success=False,
+            protocol_id=protocol_id,
+            agent_outputs={},
+            errors=[str(e)],
+            message=f"AI review failed: {str(e)}"
+        )
 
 
 @router.get("/protocols/{protocol_id}/ai-results")
