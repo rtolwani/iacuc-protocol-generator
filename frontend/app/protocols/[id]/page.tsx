@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,41 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { ChevronDown, ChevronUp, Brain, CheckCircle, AlertTriangle, ArrowRight, Check, Eye } from "lucide-react";
 import api from "@/lib/api";
+
+// Markdown renderer component with proper styling
+function MarkdownContent({ content }: { content: string }) {
+  return (
+    <div className="prose prose-sm max-w-none prose-headings:text-base prose-headings:font-semibold prose-headings:mt-4 prose-headings:mb-2 prose-p:my-2 prose-ul:my-2 prose-li:my-0.5 prose-table:text-sm">
+      <ReactMarkdown
+        components={{
+          h1: ({ children }) => <h2 className="text-lg font-bold mt-4 mb-2 border-b pb-1">{children}</h2>,
+          h2: ({ children }) => <h3 className="text-base font-semibold mt-3 mb-2">{children}</h3>,
+          h3: ({ children }) => <h4 className="text-sm font-semibold mt-2 mb-1">{children}</h4>,
+          h4: ({ children }) => <h5 className="text-sm font-medium mt-2 mb-1">{children}</h5>,
+          p: ({ children }) => <p className="my-2 text-sm">{children}</p>,
+          ul: ({ children }) => <ul className="list-disc pl-5 my-2 space-y-1">{children}</ul>,
+          ol: ({ children }) => <ol className="list-decimal pl-5 my-2 space-y-1">{children}</ol>,
+          li: ({ children }) => <li className="text-sm">{children}</li>,
+          strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+          table: ({ children }) => (
+            <div className="overflow-x-auto my-3">
+              <table className="min-w-full border-collapse border border-gray-300 text-sm">{children}</table>
+            </div>
+          ),
+          thead: ({ children }) => <thead className="bg-gray-100">{children}</thead>,
+          th: ({ children }) => <th className="border border-gray-300 px-3 py-1.5 text-left font-medium">{children}</th>,
+          td: ({ children }) => <td className="border border-gray-300 px-3 py-1.5">{children}</td>,
+          hr: () => <hr className="my-4 border-gray-200" />,
+          blockquote: ({ children }) => (
+            <blockquote className="border-l-4 border-blue-300 pl-4 my-2 italic text-gray-600">{children}</blockquote>
+          ),
+        }}
+      >
+        {content}
+      </ReactMarkdown>
+    </div>
+  );
+}
 
 interface HumaneEndpoint {
   criterion: string;
@@ -430,15 +466,14 @@ export default function ProtocolDetailPage() {
                       <div className="mt-3 grid md:grid-cols-2 gap-4">
                         <div>
                           <p className="text-sm font-medium text-gray-700 mb-2">Original Value</p>
-                          <div className="bg-white border rounded p-3 text-sm max-h-48 overflow-y-auto">
-                            {comparison.original_value || "(not set)"}
+                          <div className="bg-white border rounded p-3 max-h-64 overflow-y-auto">
+                            <MarkdownContent content={comparison.original_value || "(not set)"} />
                           </div>
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-green-700 mb-2">AI Suggestion</p>
-                          <div className="bg-green-50 border border-green-200 rounded p-3 text-sm max-h-48 overflow-y-auto whitespace-pre-wrap">
-                            {comparison.ai_suggestion.substring(0, 500)}
-                            {comparison.ai_suggestion.length > 500 && "..."}
+                          <p className="text-sm font-medium text-green-700 mb-2">AI Suggestion (Preview)</p>
+                          <div className="bg-green-50 border border-green-200 rounded p-3 max-h-64 overflow-y-auto">
+                            <MarkdownContent content={comparison.ai_suggestion.substring(0, 1000) + (comparison.ai_suggestion.length > 1000 ? "\n\n*...more content available after applying...*" : "")} />
                           </div>
                         </div>
                       </div>
@@ -468,8 +503,8 @@ export default function ProtocolDetailPage() {
                   {/* Full Output View */}
                   {isExpanded && !isShowingComparison && (
                     <div className="px-4 pb-4 border-t">
-                      <div className="mt-3 bg-gray-50 rounded p-4 text-sm whitespace-pre-wrap font-mono max-h-96 overflow-y-auto">
-                        {output || "No output available"}
+                      <div className="mt-3 bg-gray-50 rounded p-4 max-h-96 overflow-y-auto">
+                        <MarkdownContent content={output || "No output available"} />
                       </div>
                     </div>
                   )}
@@ -619,20 +654,26 @@ export default function ProtocolDetailPage() {
           <CardContent className="space-y-4">
             {protocol.experimental_design && (
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Experimental Design</p>
-                <p>{protocol.experimental_design}</p>
+                <p className="text-sm text-muted-foreground mb-2">Experimental Design</p>
+                <div className="bg-gray-50 rounded-lg p-4 border">
+                  <MarkdownContent content={protocol.experimental_design} />
+                </div>
               </div>
             )}
             {protocol.statistical_methods && (
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Statistical Methods</p>
-                <p>{protocol.statistical_methods}</p>
+                <p className="text-sm text-muted-foreground mb-2">Statistical Methods</p>
+                <div className="bg-gray-50 rounded-lg p-4 border">
+                  <MarkdownContent content={protocol.statistical_methods} />
+                </div>
               </div>
             )}
             {protocol.euthanasia_method && (
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Euthanasia Method</p>
-                <p>{protocol.euthanasia_method}</p>
+                <p className="text-sm text-muted-foreground mb-2">Euthanasia Method</p>
+                <div className="bg-gray-50 rounded-lg p-4 border">
+                  <MarkdownContent content={protocol.euthanasia_method} />
+                </div>
               </div>
             )}
           </CardContent>
@@ -648,27 +689,35 @@ export default function ProtocolDetailPage() {
           <CardContent className="space-y-4">
             {protocol.replacement_statement && (
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Replacement</p>
-                <p>{protocol.replacement_statement}</p>
+                <p className="text-sm text-muted-foreground mb-2">Replacement</p>
+                <div className="bg-gray-50 rounded-lg p-4 border">
+                  <MarkdownContent content={protocol.replacement_statement} />
+                </div>
               </div>
             )}
             {protocol.reduction_statement && (
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Reduction</p>
-                <p>{protocol.reduction_statement}</p>
+                <p className="text-sm text-muted-foreground mb-2">Reduction</p>
+                <div className="bg-gray-50 rounded-lg p-4 border">
+                  <MarkdownContent content={protocol.reduction_statement} />
+                </div>
               </div>
             )}
             {protocol.refinement_statement && (
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Refinement</p>
-                <p>{protocol.refinement_statement}</p>
+                <p className="text-sm text-muted-foreground mb-2">Refinement</p>
+                <div className="bg-gray-50 rounded-lg p-4 border">
+                  <MarkdownContent content={protocol.refinement_statement} />
+                </div>
               </div>
             )}
             {protocol.humane_endpoints && (
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Humane Endpoints</p>
+                <p className="text-sm text-muted-foreground mb-2">Humane Endpoints</p>
                 {typeof protocol.humane_endpoints === "string" ? (
-                  <p>{protocol.humane_endpoints}</p>
+                  <div className="bg-gray-50 rounded-lg p-4 border">
+                    <MarkdownContent content={protocol.humane_endpoints} />
+                  </div>
                 ) : Array.isArray(protocol.humane_endpoints) ? (
                   <div className="space-y-2 mt-2">
                     {protocol.humane_endpoints.map((endpoint, index) => (
@@ -687,8 +736,10 @@ export default function ProtocolDetailPage() {
             )}
             {protocol.monitoring_schedule && (
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Monitoring Schedule</p>
-                <p>{protocol.monitoring_schedule}</p>
+                <p className="text-sm text-muted-foreground mb-2">Monitoring Schedule</p>
+                <div className="bg-gray-50 rounded-lg p-4 border">
+                  <MarkdownContent content={protocol.monitoring_schedule} />
+                </div>
               </div>
             )}
           </CardContent>
