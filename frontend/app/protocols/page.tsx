@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { api } from "@/lib/api";
 
 interface ProtocolSummary {
   id: string;
@@ -28,9 +29,7 @@ export default function ProtocolsPage() {
   useEffect(() => {
     async function fetchProtocols() {
       try {
-        const response = await fetch("http://localhost:8000/api/v1/protocols");
-        if (!response.ok) throw new Error("Failed to fetch protocols");
-        const data = await response.json();
+        const data = await api.listProtocols();
         setProtocols(data.protocols);
       } catch (err) {
         setError("Unable to load protocols. Make sure the backend is running.");

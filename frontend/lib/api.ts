@@ -2,7 +2,17 @@
  * API Client for IACUC Protocol Generator Backend
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+// Get base URL from environment, ensuring it ends with /api/v1
+function getApiBaseUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+  // If the URL doesn't end with /api/v1, append it (for Render's fromService which only provides host)
+  if (!envUrl.endsWith("/api/v1")) {
+    return `${envUrl.replace(/\/$/, "")}/api/v1`;
+  }
+  return envUrl;
+}
+
+const API_BASE_URL = getApiBaseUrl();
 
 export interface ProtocolSummary {
   id: string;
