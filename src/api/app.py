@@ -16,28 +16,8 @@ def get_allowed_origins() -> list[str]:
     """
     Get list of allowed CORS origins based on environment.
     """
-    # Always allow localhost for development
-    origins = [
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ]
-    
-    # Add Render frontend URL (deployed)
-    origins.extend([
-        "https://iacuc-protocol-frontend.onrender.com",
-        "https://iacuc-protocol-generator.onrender.com",
-    ])
-    
-    # Add any custom domain from environment
-    custom_origin = os.getenv("FRONTEND_URL")
-    if custom_origin:
-        origins.append(custom_origin)
-    
-    # In development, allow all origins
-    if os.getenv("ENVIRONMENT") != "production":
-        origins.append("*")
-    
-    return origins
+    # Allow all origins for now - can restrict in production later
+    return ["*"]
 
 
 def create_app() -> FastAPI:
@@ -55,12 +35,11 @@ def create_app() -> FastAPI:
         redoc_url="/redoc",
     )
     
-    # Configure CORS with allowed origins
-    allowed_origins = get_allowed_origins()
+    # Configure CORS - allow all origins
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=allowed_origins,
-        allow_credentials=True,
+        allow_origins=["*"],
+        allow_credentials=False,  # Must be False when using wildcard origins
         allow_methods=["*"],
         allow_headers=["*"],
     )
