@@ -2,10 +2,16 @@
  * API Client for IACUC Protocol Generator Backend
  */
 
-// Get base URL from environment, ensuring it ends with /api/v1
+// Get base URL from environment, ensuring it has protocol and ends with /api/v1
 function getApiBaseUrl(): string {
-  const envUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
-  // If the URL doesn't end with /api/v1, append it (for Render's fromService which only provides host)
+  let envUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+  
+  // Render's fromService returns just hostname - add https:// if missing
+  if (envUrl && !envUrl.startsWith("http://") && !envUrl.startsWith("https://")) {
+    envUrl = `https://${envUrl}`;
+  }
+  
+  // If the URL doesn't end with /api/v1, append it
   if (!envUrl.endsWith("/api/v1")) {
     return `${envUrl.replace(/\/$/, "")}/api/v1`;
   }
